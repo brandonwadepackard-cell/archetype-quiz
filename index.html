@@ -3,1575 +3,1228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Archetype Quiz V11.8</title>
+    <title>The Archetype Quiz V11.9</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
-            min-height: 100vh;
-            color: #e0e0e0;
-            line-height: 1.6;
-        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%); min-height: 100vh; color: #e0e0e0; line-height: 1.6; }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        
-        /* Header */
         .header { text-align: center; padding: 40px 20px; }
-        .header h1 { 
-            font-size: 2.5em; 
-            background: linear-gradient(135deg, #f093fb, #f5576c, #4facfe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
+        .header h1 { font-size: 2.5em; background: linear-gradient(135deg, #f093fb, #f5576c, #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
         .header p { color: #888; font-size: 1.1em; }
-        
-        /* Progress */
-        .progress-container { 
-            background: #1e1e2e; 
-            border-radius: 10px; 
-            padding: 15px 20px;
-            margin-bottom: 30px;
-        }
-        .progress-bar { 
-            height: 8px; 
-            background: #2a2a3e; 
-            border-radius: 4px; 
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-        .progress-fill { 
-            height: 100%; 
-            background: linear-gradient(90deg, #4facfe, #00f2fe);
-            transition: width 0.3s ease;
-        }
+        .progress-container { background: #1e1e2e; border-radius: 10px; padding: 15px 20px; margin-bottom: 30px; }
+        .progress-bar { height: 8px; background: #2a2a3e; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe); transition: width 0.3s ease; }
         .progress-text { font-size: 0.9em; color: #888; }
-        
-        /* Question Card */
-        .question-card {
-            background: #1e1e2e;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            border: 1px solid #2a2a3e;
-        }
-        .question-section { 
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            margin-bottom: 15px;
-        }
+        .question-card { background: #1e1e2e; border-radius: 15px; padding: 30px; margin-bottom: 20px; border: 1px solid #2a2a3e; }
+        .question-section { display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); padding: 5px 15px; border-radius: 20px; font-size: 0.85em; margin-bottom: 15px; }
         .question-text { font-size: 1.3em; margin-bottom: 25px; color: #fff; }
-        
-        /* Options */
         .options { display: flex; flex-direction: column; gap: 12px; }
-        .option {
-            background: #252535;
-            border: 2px solid #3a3a4e;
-            border-radius: 10px;
-            padding: 15px 20px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .option:hover { border-color: #4facfe; background: #2a2a40; }
-        .option.selected { border-color: #4facfe; background: #1a3a5e; }
-        .option.ranked { opacity: 0.5; pointer-events: none; }
-        .option-label {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #3a3a4e;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-        .option.selected .option-label { background: #4facfe; color: #000; }
-        
-        /* Ranking Display */
-        .ranking-display {
-            margin-top: 20px;
-            padding: 15px;
-            background: #1a1a2a;
-            border-radius: 10px;
-        }
-        .ranking-display h4 { margin-bottom: 10px; color: #888; }
-        .rank-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px;
-            background: #252535;
-            border-radius: 5px;
-            margin-bottom: 5px;
-        }
-        .rank-number {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.8em;
-        }
-        .rank-1 { background: #ffd700; color: #000; }
-        .rank-2 { background: #c0c0c0; color: #000; }
-        .rank-3 { background: #cd7f32; color: #000; }
-        .rank-4 { background: #4a4a5a; color: #fff; }
-        
-        /* Navigation */
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            color: #000;
-        }
+        .option { background: #2a2a3e; border: 2px solid #3a3a4e; border-radius: 10px; padding: 15px 20px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 15px; }
+        .option:hover { border-color: #4facfe; background: #3a3a4e; }
+        .option.selected-most { border-color: #00c853; background: rgba(0, 200, 83, 0.15); }
+        .option.selected-least { border-color: #ff5252; background: rgba(255, 82, 82, 0.15); }
+        .option.disabled { opacity: 0.5; pointer-events: none; }
+        .option-letter { width: 32px; height: 32px; border-radius: 50%; background: #3a3a4e; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0; }
+        .option-text { flex: 1; }
+        .selection-badge { font-size: 0.75em; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
+        .badge-most { background: #00c853; color: #000; }
+        .badge-least { background: #ff5252; color: #fff; }
+        .instructions { background: rgba(79, 172, 254, 0.1); border: 1px solid rgba(79, 172, 254, 0.3); border-radius: 10px; padding: 15px; margin-bottom: 20px; font-size: 0.9em; }
+        .nav-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+        .btn { padding: 12px 30px; border-radius: 25px; border: none; cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.2s ease; }
+        .btn-primary { background: linear-gradient(135deg, #4facfe, #00f2fe); color: #000; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         .btn-secondary { background: #3a3a4e; color: #fff; }
         .btn-secondary:hover { background: #4a4a5e; }
-        .btn-danger { background: #c0392b; color: #fff; }
         
-        /* Results */
+        /* Results Styles */
         .results-container { display: none; }
-        .results-header { text-align: center; padding: 40px 20px; }
-        .results-header h2 {
-            font-size: 2em;
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .results-header { text-align: center; margin-bottom: 40px; }
+        .results-header h2 { font-size: 2em; margin-bottom: 10px; }
+        .layer-section { background: #1e1e2e; border-radius: 15px; padding: 25px; margin-bottom: 20px; border-left: 4px solid; }
+        .layer-sun { border-color: #f39c12; }
+        .layer-moon { border-color: #9b59b6; }
+        .layer-shadow { border-color: #2c3e50; }
+        .layer-title { font-size: 1.3em; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .layer-icon { font-size: 1.5em; }
+        .archetype-result { background: #2a2a3e; border-radius: 10px; padding: 20px; margin-bottom: 15px; }
+        .archetype-name { font-size: 1.2em; font-weight: 600; color: #4facfe; margin-bottom: 10px; }
+        .archetype-detail { margin-bottom: 8px; font-size: 0.95em; }
+        .archetype-detail strong { color: #fff; }
+        .element-bars { margin-top: 15px; }
+        .element-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .element-label { width: 60px; font-size: 0.85em; }
+        .element-track { flex: 1; height: 20px; background: #2a2a3e; border-radius: 10px; overflow: hidden; }
+        .element-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
+        .element-fire { background: linear-gradient(90deg, #f39c12, #e74c3c); }
+        .element-water { background: linear-gradient(90deg, #3498db, #9b59b6); }
+        .element-air { background: linear-gradient(90deg, #1abc9c, #16a085); }
+        .element-earth { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+        .element-score { width: 40px; text-align: right; font-size: 0.85em; }
         
-        .result-card {
-            background: #1e1e2e;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border-left: 4px solid;
-        }
-        .result-card.sun { border-color: #f5576c; }
-        .result-card.moon { border-color: #4facfe; }
-        .result-card.shadow { border-color: #764ba2; }
-        
-        .result-card h3 { margin-bottom: 15px; font-size: 1.3em; }
-        .result-card .element-tag {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-        }
-        .fire { background: #c0392b; }
-        .water { background: #2980b9; }
-        .air { background: #8e44ad; }
-        .earth { background: #27ae60; }
-        
-        /* Score Bars */
-        .score-bars { margin-top: 15px; }
-        .score-bar-item { margin-bottom: 10px; }
-        .score-bar-label { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-bottom: 5px;
-            font-size: 0.9em;
-        }
-        .score-bar-track {
-            height: 8px;
-            background: #2a2a3e;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .score-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
-        .score-bar-fill.fire { background: linear-gradient(90deg, #c0392b, #e74c3c); }
-        .score-bar-fill.water { background: linear-gradient(90deg, #2980b9, #3498db); }
-        .score-bar-fill.air { background: linear-gradient(90deg, #8e44ad, #9b59b6); }
-        .score-bar-fill.earth { background: linear-gradient(90deg, #27ae60, #2ecc71); }
-        
-        /* PDF Section */
-        .pdf-section {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            border-radius: 15px;
-            padding: 30px;
-            margin: 30px 0;
-            text-align: center;
-        }
-        .pdf-section h3 { margin-bottom: 15px; }
-        .pdf-section p { margin-bottom: 20px; color: #aaa; }
-        .pdf-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-        
-        /* Email Section */
-        .email-section {
-            background: #1e1e2e;
-            border-radius: 15px;
-            padding: 30px;
-            margin: 30px 0;
-            border: 1px solid #2a2a3e;
-        }
-        .email-section h3 { margin-bottom: 10px; }
-        .email-section p { color: #888; margin-bottom: 20px; }
-        .email-form { display: flex; gap: 10px; flex-wrap: wrap; }
-        .email-input {
-            flex: 1;
-            min-width: 250px;
-            padding: 12px 15px;
-            border: 2px solid #3a3a4e;
-            border-radius: 8px;
-            background: #252535;
-            color: #fff;
-            font-size: 1em;
-        }
-        .email-input:focus { outline: none; border-color: #4facfe; }
-        .email-success { 
-            color: #27ae60; 
-            padding: 15px; 
-            background: rgba(39, 174, 96, 0.1);
-            border-radius: 8px;
-            margin-top: 15px;
-            display: none;
-        }
+        /* PDF Button */
+        .pdf-section { text-align: center; margin: 30px 0; padding: 20px; background: #1e1e2e; border-radius: 15px; }
+        .pdf-ready { color: #00c853; margin-bottom: 15px; }
         
         /* Share Section */
-        .share-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
-        .share-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.2s ease;
-        }
-        .share-copy { background: #3a3a4e; color: #fff; }
+        .share-section { background: #1e1e2e; border-radius: 15px; padding: 25px; margin-top: 20px; text-align: center; }
+        .share-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+        .share-btn { padding: 10px 20px; border-radius: 20px; border: none; cursor: pointer; font-size: 0.9em; transition: all 0.2s ease; }
         .share-twitter { background: #1da1f2; color: #fff; }
         .share-facebook { background: #4267b2; color: #fff; }
         .share-linkedin { background: #0077b5; color: #fff; }
+        .share-copy { background: #3a3a4e; color: #fff; }
         
-        /* Archetype Questions */
-        .archetype-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        @media (max-width: 600px) {
-            .archetype-grid { grid-template-columns: 1fr; }
-        }
-        .archetype-option {
-            background: #252535;
-            border: 2px solid #3a3a4e;
-            border-radius: 10px;
-            padding: 15px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-        .archetype-option:hover { border-color: #4facfe; }
-        .archetype-option.selected { border-color: #4facfe; background: #1a3a5e; }
-        .archetype-name { font-weight: bold; font-size: 1.1em; }
-        .archetype-element { font-size: 0.8em; color: #888; }
-
-        /* Expand Section */
-        .expand-section { margin-top: 20px; }
-        .expand-btn {
-            background: transparent;
-            border: 1px solid #4a4a5e;
-            color: #888;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-        }
-        .expand-content { display: none; margin-top: 15px; }
-        .expand-content.show { display: block; }
+        /* Email Section */
+        .email-section { background: #2a2a3e; border-radius: 10px; padding: 20px; margin-top: 20px; }
+        .email-input { width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid #3a3a4e; background: #1e1e2e; color: #fff; font-size: 1em; margin-bottom: 10px; }
+        .email-input:focus { outline: none; border-color: #4facfe; }
         
-        /* Loading */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 40px;
-        }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #2a2a3e;
-            border-top-color: #4facfe;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* Shared View Notice */
-        .shared-notice {
-            background: linear-gradient(135deg, #f093fb20, #f5576c20);
-            border: 1px solid #f5576c;
-            border-radius: 10px;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            display: none;
-        }
+        /* Intro Screen Styles */
+        .intro-section { background: #1e1e2e; border-radius: 15px; padding: 25px 30px; margin-bottom: 20px; border: 1px solid #2a2a3e; }
+        .intro-section h2 { color: #4facfe; margin-bottom: 15px; font-size: 1.3em; }
+        .intro-section p { margin-bottom: 12px; color: #ccc; }
+        .layer-explain { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+        .layer-item { display: flex; align-items: flex-start; gap: 15px; background: #2a2a3e; padding: 15px; border-radius: 10px; }
+        .layer-item .layer-icon { font-size: 1.8em; }
+        .layer-item p { margin: 5px 0 0 0; font-size: 0.9em; color: #aaa; }
+        .sun-layer { border-left: 3px solid #f39c12; }
+        .moon-layer { border-left: 3px solid #9b59b6; }
+        .shadow-layer { border-left: 3px solid #5a6a7a; }
+        .elements-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
+        .element-box { background: #2a2a3e; padding: 15px; border-radius: 10px; text-align: center; }
+        .element-box p { margin: 5px 0 0 0; font-size: 0.85em; color: #aaa; }
+        .fire-box { border-top: 3px solid #e74c3c; }
+        .water-box { border-top: 3px solid #3498db; }
+        .air-box { border-top: 3px solid #1abc9c; }
+        .earth-box { border-top: 3px solid #27ae60; }
+        .instructions-box { display: flex; flex-direction: column; gap: 12px; }
+        .instruction-item { display: flex; align-items: flex-start; gap: 15px; }
+        .instruction-num { background: linear-gradient(135deg, #4facfe, #00f2fe); color: #000; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+        .instruction-item p { margin: 0; color: #ccc; }
+        .btn-large { padding: 15px 40px; font-size: 1.1em; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>The Archetype Quiz</h1>
-            <p>Discover your Sun, Moon, and Shadow archetypes</p>
-        </div>
-        
-        <div id="quiz-container">
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
+        <!-- INTRO SCREEN -->
+        <div id="intro-screen">
+            <div class="header">
+                <h1>The Archetype Quiz</h1>
+                <p>Discover your psychological patterns across Sun, Moon & Shadow</p>
+            </div>
+            
+            <div class="intro-section">
+                <h2>What Are The Poker Archetypes?</h2>
+                <p>The 16 Poker Archetypes are psychological profiles that reveal how you operate under pressure. Originally developed from thousands of hours observing behavior at high-stakes poker tables, these patterns extend far beyond cards—they show up in your relationships, career, and life decisions.</p>
+                
+                <p>Every person carries <strong>three layers</strong> of archetypal energy:</p>
+                
+                <div class="layer-explain">
+                    <div class="layer-item sun-layer">
+                        <span class="layer-icon">☀️</span>
+                        <div>
+                            <strong>The Sun (Your Mask)</strong>
+                            <p>What you want the world to see. The image you project. Your aspirational self.</p>
+                        </div>
+                    </div>
+                    <div class="layer-item moon-layer">
+                        <span class="layer-icon">🌙</span>
+                        <div>
+                            <strong>The Moon (Under Pressure)</strong>
+                            <p>What emerges when the mask drops. Your instinctive response when stakes are high.</p>
+                        </div>
+                    </div>
+                    <div class="layer-item shadow-layer">
+                        <span class="layer-icon">🌑</span>
+                        <div>
+                            <strong>The Shadow (The Avoided)</strong>
+                            <p>What you hide from yourself and others. Your blind spots and growth edges.</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="progress-text">
-                    Question <span id="current-q">1</span> of <span id="total-q">45</span>
-                    <span style="float: right;">~18 min • 144 data points</span>
+                
+                <p>The archetypes are organized across four elemental energies:</p>
+                
+                <div class="elements-grid">
+                    <div class="element-box fire-box">
+                        <strong>🔥 Fire</strong>
+                        <p>Action, intensity, will</p>
+                    </div>
+                    <div class="element-box water-box">
+                        <strong>💧 Water</strong>
+                        <p>Connection, emotion, flow</p>
+                    </div>
+                    <div class="element-box air-box">
+                        <strong>💨 Air</strong>
+                        <p>Mind, perception, change</p>
+                    </div>
+                    <div class="element-box earth-box">
+                        <strong>🌍 Earth</strong>
+                        <p>Structure, mastery, stability</p>
+                    </div>
                 </div>
             </div>
             
+            <div class="intro-section">
+                <h2>How This Quiz Works</h2>
+                <div class="instructions-box">
+                    <div class="instruction-item">
+                        <span class="instruction-num">1</span>
+                        <p><strong>45 questions</strong> across three sections (Sun, Moon, Shadow) plus direct pattern identification</p>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-num">2</span>
+                        <p>For each question, select the option <strong>MOST like you</strong>, then the option <strong>LEAST like you</strong></p>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-num">3</span>
+                        <p><strong>Answer honestly</strong>, not how you wish you were. The shadow questions especially require honesty to be useful.</p>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-num">4</span>
+                        <p>Takes approximately <strong>12-15 minutes</strong>. Your results include a downloadable PDF report.</p>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; color: #888; font-size: 0.9em; margin-top: 20px;">There are no right or wrong answers. Every archetype has gifts and shadows.</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-primary btn-large" onclick="startQuiz()">Begin The Quiz →</button>
+            </div>
+        </div>
+        
+        <!-- QUIZ SCREEN (hidden initially) -->
+        <div id="quiz-container" style="display: none;">
+            <div class="header">
+                <h1>The Archetype Quiz</h1>
+                <p>Discover your psychological patterns across Sun, Moon & Shadow</p>
+                <p style="font-size: 0.85em; color: #666; margin-top: 5px;">45 questions · ~15 minutes · 180 data points</p>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text">Question <span id="current-q">1</span> of 45</div>
+            </div>
+            
+            <div class="instructions">
+                <strong>Instructions:</strong> For each question, select the option that is <span style="color: #00c853;">MOST like you</span>, then the option that is <span style="color: #ff5252;">LEAST like you</span>.
+            </div>
+            
             <div class="question-card" id="question-card">
-                <!-- Question content rendered here -->
+                <!-- Question content loaded by JS -->
             </div>
             
             <div class="nav-buttons">
                 <button class="btn btn-secondary" id="back-btn" onclick="goBack()" style="display: none;">← Back</button>
-                <button class="btn btn-secondary" id="undo-btn" onclick="undoRank()" style="display: none;">↩ Undo</button>
-                <button class="btn btn-danger" id="reset-btn" onclick="resetQuestion()" style="display: none;">Reset All</button>
                 <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled>Next →</button>
             </div>
         </div>
         
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Analyzing your archetype profile...</p>
-        </div>
-        
         <div class="results-container" id="results-container">
-            <!-- Results rendered here -->
+            <!-- Results loaded by JS -->
         </div>
     </div>
 
     <script>
-        // ==========================================
-        // QUIZ DATA & STATE
-        // ==========================================
-        
+        // Archetype Data with deep assessment content
+        const archetypeData = {
+            wizard: {
+                name: 'Wizard', element: 'earth',
+                wound: 'Fear of being ordinary or unexceptional',
+                gift: 'Sees connections others miss, strategic clarity',
+                shadow: 'Uses insight as weapon, emotional detachment',
+                tell: 'Eyes narrow when processing, long pauses before devastating observations',
+                poker: 'Exploits patterns ruthlessly, reads timing tells',
+                exploit: 'Overconfident in reads, can be manipulated by false patterns',
+                growth: 'Learn that connection matters more than being right',
+                blindSpots: ['Underestimates emotional intelligence in others', 'Misses when being cold pushes allies away', 'Assumes others think strategically'],
+                relationships: 'Can make partners feel like specimens being studied',
+                career: 'Excels in strategy, analysis, pattern recognition roles',
+                lifeAdvice: 'Your mind is a gift. Don\'t let it become a prison that separates you from real human warmth.'
+            },
+            king: {
+                name: 'King', element: 'earth',
+                wound: 'Fear of being irrelevant or powerless',
+                gift: 'Natural authority, vision, ability to mobilize others',
+                shadow: 'Tyranny, inability to receive feedback, isolation at top',
+                tell: 'Posture shifts to dominant, voice drops when authority challenged',
+                poker: 'Commands table presence, influences action through sheer gravity',
+                exploit: 'Challenge their authority publicly - they overreact',
+                growth: 'True leadership includes vulnerability and listening',
+                blindSpots: ['Confuses compliance with loyalty', 'Misses dissent brewing beneath surface', 'Believes their vision is everyone\'s vision'],
+                relationships: 'Partners can feel like subjects rather than equals',
+                career: 'Executive roles, entrepreneurship, any domain requiring vision',
+                lifeAdvice: 'The crown is heaviest when worn alone. Let others share the weight.'
+            },
+            tracker: {
+                name: 'Tracker', element: 'earth',
+                wound: 'Fear of chaos and losing control of details',
+                gift: 'Notices everything, exceptional memory, patience',
+                shadow: 'Paralysis by analysis, missing forest for trees',
+                tell: 'Eyes constantly scanning, cataloging, remembering',
+                poker: 'Tracks every bet size, timing, pattern over sessions',
+                exploit: 'Overwhelm with volume - they can\'t process chaos',
+                growth: 'Trust intuition sometimes, not everything needs data',
+                blindSpots: ['Misses emotional subtext while tracking facts', 'Over-indexes on historical patterns', 'Assumes past predicts future'],
+                relationships: 'Can make partners feel monitored rather than loved',
+                career: 'Research, analytics, investigation, quality assurance',
+                lifeAdvice: 'Some things can\'t be tracked. The heart doesn\'t keep spreadsheets.'
+            },
+            mechanic: {
+                name: 'Mechanic', element: 'earth',
+                wound: 'Fear of disorder and things breaking down',
+                gift: 'Builds systems that work, reliable, fixes what\'s broken',
+                shadow: 'Rigidity, inability to adapt when systems fail',
+                tell: 'Fidgets with objects, always optimizing something',
+                poker: 'Plays systematic, exploitable by randomization',
+                exploit: 'Introduce chaos - their systems can\'t handle it',
+                growth: 'Sometimes broken things don\'t need fixing, they need releasing',
+                blindSpots: ['Tries to systematize emotions', 'Misses that some chaos is creative', 'Fixes things that weren\'t broken'],
+                relationships: 'Can treat relationship problems as engineering challenges',
+                career: 'Operations, engineering, process improvement, logistics',
+                lifeAdvice: 'Not everything is a machine. Some things just need to be felt.'
+            },
+            mirror: {
+                name: 'Mirror', element: 'water',
+                wound: 'Fear of being truly seen themselves',
+                gift: 'Reflects truth back to others, creates self-awareness',
+                shadow: 'Loses self in reflecting others, chameleon without center',
+                tell: 'Unconsciously mimics others\' posture, speech patterns',
+                poker: 'Excellent at reading, but gives away their reads by reacting',
+                exploit: 'Show them something false - they\'ll reflect it back',
+                growth: 'Develop your own center while maintaining reflective gift',
+                blindSpots: ['Doesn\'t know own preferences', 'Absorbs others\' emotions as their own', 'Can\'t distinguish self from reflection'],
+                relationships: 'Partners may not know the "real" them',
+                career: 'Therapy, coaching, mediation, customer insight roles',
+                lifeAdvice: 'You show others who they are. Now find out who YOU are.'
+            },
+            siren: {
+                name: 'Siren', element: 'water',
+                wound: 'Fear of being unlovable at core',
+                gift: 'Magnetic presence, draws people in, emotional depth',
+                shadow: 'Manipulation through attraction, creating dependency',
+                tell: 'Draws attention without trying, energy shifts when they enter',
+                poker: 'Table falls into their orbit, influences through presence not logic',
+                exploit: 'Withdraw attention - they need the validation',
+                growth: 'Learn that you\'re lovable without performing',
+                blindSpots: ['Confuses attention with love', 'Doesn\'t see manipulation as manipulation', 'Attracts but can\'t sustain'],
+                relationships: 'Intensity at start, struggles with comfortable mundane',
+                career: 'Sales, performance, influence roles, brand building',
+                lifeAdvice: 'You don\'t have to earn love. You just have to let it in.'
+            },
+            diplomat: {
+                name: 'Diplomat', element: 'water',
+                wound: 'Fear of conflict and disconnection',
+                gift: 'Builds bridges, creates trust, finds common ground',
+                shadow: 'People-pleasing, loses self in maintaining peace',
+                tell: 'Speaks in "we" language, physically positions between conflicts',
+                poker: 'Makes table friendly, exploited by those who use conflict strategically',
+                exploit: 'Create conflict - they\'ll sacrifice position to resolve it',
+                growth: 'Sometimes the bridge needs to burn',
+                blindSpots: ['Enables bad behavior to keep peace', 'Doesn\'t see own needs as valid', 'Confuses peace with health'],
+                relationships: 'Harmonious on surface, needs unexpressed underneath',
+                career: 'HR, negotiations, partnerships, community building',
+                lifeAdvice: 'Peace at any price isn\'t peace. It\'s surrender.'
+            },
+            hypnotist: {
+                name: 'Hypnotist', element: 'air',
+                wound: 'Fear of being powerless or ignored',
+                gift: 'Plants ideas that take root, subtle influence mastery',
+                shadow: 'Covert manipulation, making people think it was their idea',
+                tell: 'Reframes constantly, seeds ideas then waits for them to "discover" it',
+                poker: 'Influences opponents\' decisions through table talk, timing',
+                exploit: 'Call out what they\'re doing - exposure neutralizes them',
+                growth: 'Direct communication is also a form of power',
+                blindSpots: ['Doesn\'t trust direct approaches', 'Assumes manipulation is always necessary', 'Loses track of own authentic desires'],
+                relationships: 'Partners feel influenced but can\'t pinpoint how',
+                career: 'Marketing, propaganda, persuasion arts, strategic communication',
+                lifeAdvice: 'You can get what you want by asking. Try it sometime.'
+            },
+            oracle: {
+                name: 'Oracle', element: 'air',
+                wound: 'Fear of uncertainty and not knowing',
+                gift: 'Sees what\'s coming, pattern recognition across time',
+                shadow: 'Paralyzed by seeing too many possibilities',
+                tell: 'Distant gaze, speaks in future tense, knowing smile',
+                poker: 'Anticipates plays before they happen, but can be too early',
+                exploit: 'Present immediate chaos - they\'re tuned to long-term',
+                growth: 'Presence matters as much as foresight',
+                blindSpots: ['Lives in future, misses present', 'Assumes seeing equals controlling', 'Frustrated when others don\'t see the obvious'],
+                relationships: 'Can feel like talking to someone who\'s already elsewhere',
+                career: 'Forecasting, strategy, risk assessment, trend analysis',
+                lifeAdvice: 'Seeing the future doesn\'t mean you\'re living your life.'
+            },
+            trickster: {
+                name: 'Trickster', element: 'air',
+                wound: 'Fear of being trapped or constrained',
+                gift: 'Disrupts stagnation, reveals absurdity, creates space for new',
+                shadow: 'Chaos for chaos\' sake, can\'t build only destroy',
+                tell: 'Gleeful at disruption, energy spikes when norms are broken',
+                poker: 'Unreadable because genuinely random at times',
+                exploit: 'Require consistency - they can\'t maintain it',
+                growth: 'Building can be as liberating as destroying',
+                blindSpots: ['Doesn\'t see value in stability', 'Confuses chaos with freedom', 'Burns bridges needed later'],
+                relationships: 'Exciting but exhausting, partners crave predictability',
+                career: 'Innovation, disruption roles, creative destruction',
+                lifeAdvice: 'Burning it down is easy. Building something better is the real trick.'
+            },
+            shadow: {
+                name: 'Shadow', element: 'air',
+                wound: 'Fear of being exposed or truly known',
+                gift: 'Persistence, operates unseen, outlasts everyone',
+                shadow: 'Isolation, invisibility becomes prison',
+                tell: 'Comfortable in periphery, flinches from spotlight',
+                poker: 'Forgettable at table until they\'ve taken everything',
+                exploit: 'Force them into spotlight - they crumble',
+                growth: 'Being seen isn\'t the same as being hurt',
+                blindSpots: ['Assumes invisibility is strength', 'Misses opportunities requiring visibility', 'Loneliness feels like safety'],
+                relationships: 'Partners may feel they never fully know them',
+                career: 'Behind-scenes roles, research, support functions',
+                lifeAdvice: 'You can\'t be loved by someone who can\'t see you.'
+            },
+            titan: {
+                name: 'Titan', element: 'fire',
+                wound: 'Fear of being weak or dependent',
+                gift: 'Unstoppable force, endurance, overwhelms through will',
+                shadow: 'Bulldozes over nuance, doesn\'t know when to stop',
+                tell: 'Leans in physically, voice gets louder when challenged',
+                poker: 'Applies pressure relentlessly, exploitable by those who trap',
+                exploit: 'Let them overcommit, then trap them',
+                growth: 'Strength includes knowing when to yield',
+                blindSpots: ['Sees yielding as weakness', 'Misses subtle resistance', 'Exhausts allies with intensity'],
+                relationships: 'Partners can feel overwhelmed, steamrolled',
+                career: 'Sales, athletics, any domain rewarding pure will',
+                lifeAdvice: 'You\'re strong enough to be gentle. Try it.'
+            },
+            maniac: {
+                name: 'Maniac', element: 'fire',
+                wound: 'Fear of stagnation or being ordinary',
+                gift: 'Lightning pattern recognition, thrives in chaos',
+                shadow: 'Creates chaos to feel alive, addicted to intensity',
+                tell: 'Energy accelerates rapidly, bored by stability',
+                poker: 'Brilliant in wild games, self-destructs in slow ones',
+                exploit: 'Slow the game down - they\'ll implode',
+                growth: 'Peace isn\'t the same as death',
+                blindSpots: ['Confuses calm with boring', 'Doesn\'t see self-sabotage patterns', 'Mistakes intensity for meaning'],
+                relationships: 'Thrilling but chaotic, partners exhausted by rollercoaster',
+                career: 'Crisis management, trading, high-variance environments',
+                lifeAdvice: 'You don\'t have to set fires to feel warm.'
+            },
+            pirate: {
+                name: 'Pirate', element: 'fire',
+                wound: 'Fear of missing out or being constrained',
+                gift: 'Seizes opportunity, freedom, refuses artificial limits',
+                shadow: 'Can\'t commit, always looking at next horizon',
+                tell: 'Eyes on exits, restless energy, light on possessions',
+                poker: 'Great at short-term extraction, terrible at long games',
+                exploit: 'Require commitment - they\'ll bail',
+                growth: 'Some treasures require staying in one place',
+                blindSpots: ['Sees commitment as trap', 'Misses value of deep relationships', 'Confuses freedom with running'],
+                relationships: 'Exciting early, partners feel abandoned',
+                career: 'Consulting, freelance, opportunity-driven roles',
+                lifeAdvice: 'Running toward something and running from something look the same from the outside.'
+            },
+            alchemist: {
+                name: 'Alchemist', element: 'fire',
+                wound: 'Fear of worthlessness without transformation',
+                gift: 'Transforms pressure into power, creates gold from lead',
+                shadow: 'Addicted to crisis, creates problems to solve',
+                tell: 'Comes alive in difficulty, bored by smooth sailing',
+                poker: 'Best when behind, dangerous when things get hard',
+                exploit: 'Don\'t give them a crisis to solve',
+                growth: 'You\'re valuable without the struggle',
+                blindSpots: ['Creates crises unconsciously', 'Doesn\'t recognize peace as success', 'Measures self only by transformations'],
+                relationships: 'Best in hard times, struggles with contentment',
+                career: 'Turnaround roles, crisis consulting, transformation work',
+                lifeAdvice: 'You don\'t have to suffer to be worthy. Ease is allowed.'
+            },
+            knight: {
+                name: 'Knight', element: 'fire',
+                wound: 'Fear of betrayal or failing those who depend on them',
+                gift: 'Loyalty, protection, earns devotion through dedication',
+                shadow: 'Rigid loyalty, can\'t see when cause is corrupt',
+                tell: 'Protective positioning, vigilance for threats to their people',
+                poker: 'Plays for the group, exploitable by isolating them',
+                exploit: 'Threaten their people - they\'ll make emotional mistakes',
+                growth: 'Loyalty to self is not betrayal',
+                blindSpots: ['Stays too long in bad situations', 'Needs a cause to feel worthy', 'Sacrifices self without being asked'],
+                relationships: 'Devoted but can be suffocating in protection',
+                career: 'Security, service roles, protective positions',
+                lifeAdvice: 'You\'re allowed to put yourself first sometimes. It\'s not betrayal.'
+            }
+        };
+
+        // Questions - MOST/LEAST format, balanced archetypes
         const questions = [
-            // SUN QUESTIONS (1-11) - The Mask
-            { id: 1, type: 'sun', section: 'The Mask', text: "You're meeting someone important for the first time. What do you make sure they notice?", options: [
-                { text: "That I'm sharp, capable, and get things done", element: 'fire' },
-                { text: "That I'm warm, attentive, and easy to talk to", element: 'water' },
-                { text: "That I'm interesting, creative, and see things differently", element: 'air' },
-                { text: "That I'm reliable, prepared, and have my foundations solid", element: 'earth' }
+            // SUN QUESTIONS (1-11) - The Mask, what you WANT people to see
+            { id: 1, type: 'sun', section: 'The Sun', text: "When meeting someone new, what do you want them to notice first?", options: [
+                { text: "My confidence and directness", element: 'fire', archetypes: ['maniac', 'pirate'] },
+                { text: "My warmth and approachability", element: 'water', archetypes: ['knight', 'diplomat'] },
+                { text: "My insight and quick thinking", element: 'air', archetypes: ['oracle', 'shadow'] },
+                { text: "My competence and reliability", element: 'earth', archetypes: ['mechanic', 'king'] }
             ]},
-            { id: 2, type: 'sun', section: 'The Mask', text: "What would be the WORST thing for people to think about you?", options: [
-                { text: "That I'm weak or passive", element: 'fire' },
-                { text: "That I'm cold or disconnected", element: 'water' },
-                { text: "That I'm boring or predictable", element: 'air' },
-                { text: "That I'm incompetent or unreliable", element: 'earth' }
+            { id: 2, type: 'sun', section: 'The Sun', text: "In a group project, what role do you naturally claim?", options: [
+                { text: "The one who drives action forward", element: 'fire', archetypes: ['titan', 'maniac'] },
+                { text: "The one who keeps everyone connected", element: 'water', archetypes: ['diplomat', 'knight'] },
+                { text: "The one who sees the bigger picture", element: 'air', archetypes: ['oracle', 'hypnotist'] },
+                { text: "The one who ensures quality execution", element: 'earth', archetypes: ['tracker', 'wizard'] }
             ]},
-            { id: 3, type: 'sun', section: 'The Mask', text: "When you walk into a room where you don't know anyone, what energy do you lead with?", options: [
-                { text: "Confident, commanding - I take up space", element: 'fire' },
-                { text: "Warm, approachable - I make connections", element: 'water' },
-                { text: "Curious, observant - I read the room", element: 'air' },
-                { text: "Calm, grounded - I establish presence", element: 'earth' }
+            { id: 3, type: 'sun', section: 'The Sun', text: "What compliment means the most to you?", options: [
+                { text: "You're fearless", element: 'fire', archetypes: ['pirate', 'alchemist'] },
+                { text: "You really understand people", element: 'water', archetypes: ['knight', 'siren'] },
+                { text: "You're so clever", element: 'air', archetypes: ['trickster', 'shadow'] },
+                { text: "You're someone I can count on", element: 'earth', archetypes: ['king', 'tracker'] }
             ]},
-            { id: 4, type: 'sun', section: 'The Mask', text: "When someone compliments you, what do you MOST want them to notice?", options: [
-                { text: "My drive, my results, my intensity", element: 'fire' },
-                { text: "My empathy, my loyalty, my heart", element: 'water' },
-                { text: "My insight, my creativity, my unique perspective", element: 'air' },
-                { text: "My competence, my reliability, my thoroughness", element: 'earth' }
+            { id: 4, type: 'sun', section: 'The Sun', text: "When telling a story, what makes it good?", options: [
+                { text: "The intensity and stakes", element: 'fire', archetypes: ['maniac', 'pirate'] },
+                { text: "The emotional resonance", element: 'water', archetypes: ['siren', 'knight'] },
+                { text: "The unexpected twist", element: 'air', archetypes: ['shadow', 'hypnotist'] },
+                { text: "The clarity and precision", element: 'earth', archetypes: ['king', 'tracker'] }
             ]},
-            { id: 5, type: 'sun', section: 'The Mask', text: "In a group project, what role do you naturally gravitate toward?", options: [
-                { text: "The driver - I push things forward", element: 'fire' },
-                { text: "The connector - I keep people aligned", element: 'water' },
-                { text: "The strategist - I see what others miss", element: 'air' },
-                { text: "The builder - I make sure it actually works", element: 'earth' }
+            { id: 5, type: 'sun', section: 'The Sun', text: "How do you define success?", options: [
+                { text: "Winning against strong competition", element: 'fire', archetypes: ['titan', 'alchemist'] },
+                { text: "Deep relationships and loyalty", element: 'water', archetypes: ['mirror', 'diplomat'] },
+                { text: "Freedom to do things my own way", element: 'air', archetypes: ['oracle', 'shadow'] },
+                { text: "Mastery and respect in my domain", element: 'earth', archetypes: ['king', 'mechanic'] }
             ]},
-            { id: 6, type: 'sun', section: 'The Mask', text: "What do you want people to remember about you after meeting you?", options: [
-                { text: "That I'm powerful and get things done", element: 'fire' },
-                { text: "That I made them feel seen and valued", element: 'water' },
-                { text: "That I said something that stuck with them", element: 'air' },
-                { text: "That I'm someone they can count on", element: 'earth' }
+            { id: 6, type: 'sun', section: 'The Sun', text: "How do you prefer to solve problems?", options: [
+                { text: "Face them directly with full commitment", element: 'fire', archetypes: ['titan', 'pirate'] },
+                { text: "Work through the people involved", element: 'water', archetypes: ['knight', 'diplomat'] },
+                { text: "Find an angle no one else sees", element: 'air', archetypes: ['trickster', 'hypnotist'] },
+                { text: "Analyze systematically until the answer appears", element: 'earth', archetypes: ['wizard', 'tracker'] }
             ]},
-            { id: 7, type: 'sun', section: 'The Mask', text: "When telling a story, what's most important to you?", options: [
-                { text: "The impact - I want them to feel the intensity", element: 'fire' },
-                { text: "The emotion - I want them to connect", element: 'water' },
-                { text: "The insight - I want them to see what I saw", element: 'air' },
-                { text: "The details - I want them to understand what happened", element: 'earth' }
+            { id: 7, type: 'sun', section: 'The Sun', text: "What energizes you most?", options: [
+                { text: "Competition and challenge", element: 'fire', archetypes: ['pirate', 'maniac'] },
+                { text: "Deep conversation and connection", element: 'water', archetypes: ['mirror', 'siren'] },
+                { text: "New ideas and possibilities", element: 'air', archetypes: ['oracle', 'trickster'] },
+                { text: "Making progress on meaningful work", element: 'earth', archetypes: ['mechanic', 'king'] }
             ]},
-            { id: 8, type: 'sun', section: 'The Mask', text: "What quality do you MOST want to project professionally?", options: [
-                { text: "Decisive and action-oriented", element: 'fire' },
-                { text: "Collaborative and relationship-focused", element: 'water' },
-                { text: "Innovative and insightful", element: 'air' },
-                { text: "Methodical and excellent", element: 'earth' }
+            { id: 8, type: 'sun', section: 'The Sun', text: "When you walk into a room, what do you bring?", options: [
+                { text: "Energy and momentum", element: 'fire', archetypes: ['titan', 'alchemist'] },
+                { text: "Ease and warmth", element: 'water', archetypes: ['diplomat', 'siren'] },
+                { text: "Curiosity and wit", element: 'air', archetypes: ['shadow', 'hypnotist'] },
+                { text: "Grounding and stability", element: 'earth', archetypes: ['king', 'wizard'] }
             ]},
-            { id: 9, type: 'sun', section: 'The Mask', text: "When someone asks 'How are you?', what's your typical energy?", options: [
-                { text: "Upbeat and driven - always in motion", element: 'fire' },
-                { text: "Warm and open - genuinely connecting", element: 'water' },
-                { text: "Witty or thoughtful - offering something interesting", element: 'air' },
-                { text: "Steady and grounded - reliable presence", element: 'earth' }
+            { id: 9, type: 'sun', section: 'The Sun', text: "What do you want people to say about you when you're not there?", options: [
+                { text: "They get things done no matter what", element: 'fire', archetypes: ['alchemist', 'pirate'] },
+                { text: "They always make you feel heard", element: 'water', archetypes: ['mirror', 'knight'] },
+                { text: "They see things differently than anyone else", element: 'air', archetypes: ['oracle', 'trickster'] },
+                { text: "They know exactly what they're doing", element: 'earth', archetypes: ['wizard', 'mechanic'] }
             ]},
-            { id: 10, type: 'sun', section: 'The Mask', text: "What's the first thing you check when walking into a new social situation?", options: [
-                { text: "Where the action is and who has energy", element: 'fire' },
-                { text: "Who looks friendly and approachable", element: 'water' },
-                { text: "The dynamics - who's connected to who", element: 'air' },
-                { text: "The layout and logistics - understanding the space", element: 'earth' }
+            { id: 10, type: 'sun', section: 'The Sun', text: "What's your superpower in conversation?", options: [
+                { text: "I cut through the noise to what matters", element: 'fire', archetypes: ['titan', 'maniac'] },
+                { text: "I make people open up", element: 'water', archetypes: ['siren', 'mirror'] },
+                { text: "I see what they're really saying underneath", element: 'air', archetypes: ['hypnotist', 'oracle'] },
+                { text: "I remember everything and connect the dots", element: 'earth', archetypes: ['tracker', 'wizard'] }
             ]},
-            { id: 11, type: 'sun', section: 'The Mask', text: "What's your default mode in casual conversation?", options: [
-                { text: "Engaging and energetic - I bring the spark", element: 'fire' },
-                { text: "Listening and connecting - I tune into them", element: 'water' },
-                { text: "Curious and probing - I explore ideas", element: 'air' },
-                { text: "Present and steady - I'm just there with them", element: 'earth' }
-            ]},
-            
-            // MOON QUESTIONS (12-22) - Under Pressure
-            { id: 12, type: 'moon', section: 'Under Pressure', text: "When you're overwhelmed, what's your automatic response?", options: [
-                { text: "Push harder - more effort, more intensity", element: 'fire' },
-                { text: "Reach out - seek connection and support", element: 'water' },
-                { text: "Withdraw - need space to think", element: 'air' },
-                { text: "Organize - create structure to regain control", element: 'earth' }
-            ]},
-            { id: 13, type: 'moon', section: 'Under Pressure', text: "When someone criticizes you, what's your FIRST internal reaction?", options: [
-                { text: "Anger or defensiveness - I want to push back", element: 'fire' },
-                { text: "Hurt - I feel it in my chest", element: 'water' },
-                { text: "Analysis - I evaluate if they're right", element: 'air' },
-                { text: "Self-assessment - I check my work", element: 'earth' }
-            ]},
-            { id: 14, type: 'moon', section: 'Under Pressure', text: "When a project is failing, what happens to your energy?", options: [
-                { text: "I ramp up - more force, more urgency", element: 'fire' },
-                { text: "I absorb it - feel responsible for everyone", element: 'water' },
-                { text: "I detach - step back to see the bigger picture", element: 'air' },
-                { text: "I dig in - find what's broken and fix it", element: 'earth' }
-            ]},
-            { id: 15, type: 'moon', section: 'Under Pressure', text: "What happens to your communication style under stress?", options: [
-                { text: "More direct, sometimes harsh", element: 'fire' },
-                { text: "More emotional, harder to hide feelings", element: 'water' },
-                { text: "More scattered, harder to stay present", element: 'air' },
-                { text: "More rigid, less flexible", element: 'earth' }
-            ]},
-            { id: 16, type: 'moon', section: 'Under Pressure', text: "When you haven't slept well and have a big day ahead, what's your approach?", options: [
-                { text: "Power through - I'll rest when it's done", element: 'fire' },
-                { text: "Lean on others - I need extra support", element: 'water' },
-                { text: "Work around it - find clever shortcuts", element: 'air' },
-                { text: "Stay disciplined - stick to the routine", element: 'earth' }
-            ]},
-            { id: 17, type: 'moon', section: 'Under Pressure', text: "What's your tell when you're about to snap?", options: [
-                { text: "I get louder, more aggressive", element: 'fire' },
-                { text: "I get quiet and emotionally flooded", element: 'water' },
-                { text: "I get dismissive and mentally check out", element: 'air' },
-                { text: "I get cold and overly critical", element: 'earth' }
-            ]},
-            { id: 18, type: 'moon', section: 'Under Pressure', text: "When someone you care about is spiraling, what do you do?", options: [
-                { text: "Take action - fix the situation", element: 'fire' },
-                { text: "Be present - hold space for them", element: 'water' },
-                { text: "Offer perspective - help them see options", element: 'air' },
-                { text: "Provide structure - give them concrete next steps", element: 'earth' }
-            ]},
-            { id: 19, type: 'moon', section: 'Under Pressure', text: "When you're running late and traffic is terrible, what happens internally?", options: [
-                { text: "Frustration and urgency - I need to move NOW", element: 'fire' },
-                { text: "Anxiety about letting people down", element: 'water' },
-                { text: "Mental calculation of alternative routes", element: 'air' },
-                { text: "Acceptance and planning how to communicate the delay", element: 'earth' }
-            ]},
-            { id: 20, type: 'moon', section: 'Under Pressure', text: "After a major loss or failure, what's your recovery pattern?", options: [
-                { text: "Come back stronger - use it as fuel", element: 'fire' },
-                { text: "Process the feelings - need time to heal", element: 'water' },
-                { text: "Learn the lesson - extract what's useful", element: 'air' },
-                { text: "Rebuild systematically - fix what broke", element: 'earth' }
-            ]},
-            { id: 21, type: 'moon', section: 'Under Pressure', text: "When you're angry at someone, what's your natural tendency?", options: [
-                { text: "Confront them directly", element: 'fire' },
-                { text: "Struggle to hide it - they can feel it", element: 'water' },
-                { text: "Go quiet while I figure out what to do", element: 'air' },
-                { text: "State the facts and set clear boundaries", element: 'earth' }
-            ]},
-            { id: 22, type: 'moon', section: 'Under Pressure', text: "What's your worst pressure habit?", options: [
-                { text: "I become domineering or aggressive", element: 'fire' },
-                { text: "I absorb everyone else's stress", element: 'water' },
-                { text: "I become unpredictable or evasive", element: 'air' },
-                { text: "I become inflexible or controlling", element: 'earth' }
+            { id: 11, type: 'sun', section: 'The Sun', text: "How do you want to be introduced?", options: [
+                { text: "As someone who makes things happen", element: 'fire', archetypes: ['alchemist', 'maniac'] },
+                { text: "As someone everyone likes", element: 'water', archetypes: ['knight', 'siren'] },
+                { text: "As someone with unique perspective", element: 'air', archetypes: ['shadow', 'trickster'] },
+                { text: "As someone who knows their stuff", element: 'earth', archetypes: ['king', 'mechanic'] }
             ]},
             
-            // SHADOW QUESTIONS (23-33) - What You Avoid
-            { id: 23, type: 'shadow', section: 'The Shadow', text: "What part of yourself do you work hardest to hide?", options: [
-                { text: "My aggression or intensity", element: 'fire' },
-                { text: "My neediness or emotional depth", element: 'water' },
-                { text: "My chaos or unpredictability", element: 'air' },
-                { text: "My rigidity or judgmental side", element: 'earth' }
+            // MOON QUESTIONS (12-22) - What emerges under PRESSURE
+            { id: 12, type: 'moon', section: 'The Moon', text: "When blindsided by bad news, your first instinct is to:", options: [
+                { text: "Take immediate action - do something", element: 'fire', archetypes: ['titan', 'maniac'] },
+                { text: "Reach out to someone you trust", element: 'water', archetypes: ['siren', 'knight'] },
+                { text: "Step back and analyze what happened", element: 'air', archetypes: ['oracle', 'shadow'] },
+                { text: "Focus on what you can control", element: 'earth', archetypes: ['mechanic', 'tracker'] }
             ]},
-            { id: 24, type: 'shadow', section: 'The Shadow', text: "What quality do you judge MOST harshly in others?", options: [
-                { text: "Weakness or passivity", element: 'fire' },
-                { text: "Coldness or emotional unavailability", element: 'water' },
-                { text: "Boring predictability", element: 'air' },
-                { text: "Sloppiness or incompetence", element: 'earth' }
+            { id: 13, type: 'moon', section: 'The Moon', text: "When someone attacks your character unfairly, you:", options: [
+                { text: "Respond immediately and directly", element: 'fire', archetypes: ['titan', 'pirate'] },
+                { text: "Feel hurt but try to understand their view", element: 'water', archetypes: ['mirror', 'diplomat'] },
+                { text: "Detach and observe their motivation", element: 'air', archetypes: ['hypnotist', 'oracle'] },
+                { text: "Build your case with facts and evidence", element: 'earth', archetypes: ['wizard', 'tracker'] }
             ]},
-            { id: 25, type: 'shadow', section: 'The Shadow', text: "What do you secretly fear you ARE underneath it all?", options: [
-                { text: "Secretly destructive or too intense", element: 'fire' },
-                { text: "Secretly too emotional or needy", element: 'water' },
-                { text: "Secretly lost or without real direction", element: 'air' },
-                { text: "Secretly rigid or cold", element: 'earth' }
+            { id: 14, type: 'moon', section: 'The Moon', text: "In a high-stakes negotiation that's going badly, you:", options: [
+                { text: "Push harder and raise the stakes", element: 'fire', archetypes: ['maniac', 'alchemist'] },
+                { text: "Try to rebuild rapport and find connection", element: 'water', archetypes: ['siren', 'diplomat'] },
+                { text: "Look for unexpected leverage or angles", element: 'air', archetypes: ['trickster', 'hypnotist'] },
+                { text: "Fall back on preparation and process", element: 'earth', archetypes: ['mechanic', 'king'] }
             ]},
-            { id: 26, type: 'shadow', section: 'The Shadow', text: "When you see someone embodying a quality you lack, what's your reaction?", options: [
-                { text: "Competitive - I want to match or beat them", element: 'fire' },
-                { text: "Drawn to them - I want their approval", element: 'water' },
-                { text: "Curious but distant - I study them", element: 'air' },
-                { text: "Skeptical - I look for flaws", element: 'earth' }
+            { id: 15, type: 'moon', section: 'The Moon', text: "When you fail publicly, your immediate response is:", options: [
+                { text: "Get angry and channel it into action", element: 'fire', archetypes: ['titan', 'alchemist'] },
+                { text: "Seek support from people who care about you", element: 'water', archetypes: ['knight', 'siren'] },
+                { text: "Analyze what went wrong from a distance", element: 'air', archetypes: ['oracle', 'shadow'] },
+                { text: "Focus on what to fix for next time", element: 'earth', archetypes: ['mechanic', 'wizard'] }
             ]},
-            { id: 27, type: 'shadow', section: 'The Shadow', text: "What emotion do you have the hardest time expressing?", options: [
-                { text: "Vulnerability or uncertainty", element: 'fire' },
-                { text: "Anger or confrontation", element: 'water' },
-                { text: "Deep commitment or loyalty", element: 'air' },
-                { text: "Spontaneous joy or playfulness", element: 'earth' }
+            { id: 16, type: 'moon', section: 'The Moon', text: "When someone you trusted betrays you, you:", options: [
+                { text: "Cut them off completely and move on", element: 'fire', archetypes: ['pirate', 'alchemist'] },
+                { text: "Try to understand what happened between you", element: 'water', archetypes: ['mirror', 'diplomat'] },
+                { text: "Watch them carefully from now on", element: 'air', archetypes: ['hypnotist', 'shadow'] },
+                { text: "Adjust your trust protocols going forward", element: 'earth', archetypes: ['tracker', 'king'] }
             ]},
-            { id: 28, type: 'shadow', section: 'The Shadow', text: "What would you never want to be caught doing?", options: [
-                { text: "Backing down or being passive", element: 'fire' },
-                { text: "Being cold or dismissive of someone's feelings", element: 'water' },
-                { text: "Being boring or predictable", element: 'air' },
-                { text: "Being sloppy or cutting corners", element: 'earth' }
+            { id: 17, type: 'moon', section: 'The Moon', text: "Under extreme time pressure, you:", options: [
+                { text: "Move fast and trust your instincts", element: 'fire', archetypes: ['maniac', 'pirate'] },
+                { text: "Lean on your team and relationships", element: 'water', archetypes: ['diplomat', 'siren'] },
+                { text: "Find the one thing that matters most", element: 'air', archetypes: ['oracle', 'trickster'] },
+                { text: "Execute your best-prepared process", element: 'earth', archetypes: ['mechanic', 'tracker'] }
             ]},
-            { id: 29, type: 'shadow', section: 'The Shadow', text: "Which do you secretly wish you could be MORE of?", options: [
-                { text: "More forceful and commanding", element: 'fire' },
-                { text: "More emotionally connected", element: 'water' },
-                { text: "More free and unpredictable", element: 'air' },
-                { text: "More structured and disciplined", element: 'earth' }
+            { id: 18, type: 'moon', section: 'The Moon', text: "When someone is crying in front of you, you:", options: [
+                { text: "Want to fix whatever caused it", element: 'fire', archetypes: ['pirate', 'titan'] },
+                { text: "Sit with them and let them feel it", element: 'water', archetypes: ['mirror', 'knight'] },
+                { text: "Give them space while staying present", element: 'air', archetypes: ['shadow', 'oracle'] },
+                { text: "Ask questions to understand the situation", element: 'earth', archetypes: ['wizard', 'tracker'] }
             ]},
-            { id: 30, type: 'shadow', section: 'The Shadow', text: "What would be the worst thing to lose about yourself?", options: [
-                { text: "My drive and fire", element: 'fire' },
-                { text: "My capacity to love and connect", element: 'water' },
-                { text: "My mind and freedom", element: 'air' },
-                { text: "My integrity and competence", element: 'earth' }
+            { id: 19, type: 'moon', section: 'The Moon', text: "When you're exhausted but the work isn't done, you:", options: [
+                { text: "Push through on willpower alone", element: 'fire', archetypes: ['titan', 'maniac'] },
+                { text: "Ask for help or share the load", element: 'water', archetypes: ['knight', 'siren'] },
+                { text: "Find a smarter way that requires less effort", element: 'air', archetypes: ['trickster', 'hypnotist'] },
+                { text: "Prioritize ruthlessly and cut scope", element: 'earth', archetypes: ['king', 'mechanic'] }
             ]},
-            { id: 31, type: 'shadow', section: 'The Shadow', text: "What do you criticize in others but secretly struggle with yourself?", options: [
-                { text: "Ego and aggression", element: 'fire' },
-                { text: "Emotional manipulation", element: 'water' },
-                { text: "Flakiness or inconsistency", element: 'air' },
-                { text: "Being overly controlling", element: 'earth' }
+            { id: 20, type: 'moon', section: 'The Moon', text: "When your idea gets rejected, you:", options: [
+                { text: "Push for it harder or find another way", element: 'fire', archetypes: ['pirate', 'alchemist'] },
+                { text: "Feel the disappointment and process it", element: 'water', archetypes: ['mirror', 'siren'] },
+                { text: "Reframe and come at it from new angle", element: 'air', archetypes: ['hypnotist', 'trickster'] },
+                { text: "Analyze the objections and refine approach", element: 'earth', archetypes: ['wizard', 'tracker'] }
             ]},
-            { id: 32, type: 'shadow', section: 'The Shadow', text: "What's your relationship with control?", options: [
-                { text: "I need to feel in control or I escalate", element: 'fire' },
-                { text: "I avoid control - I want harmony", element: 'water' },
-                { text: "Control bores me - I want freedom", element: 'air' },
-                { text: "I need control to feel safe", element: 'earth' }
+            { id: 21, type: 'moon', section: 'The Moon', text: "When plans fall apart completely, you:", options: [
+                { text: "Improvise rapidly in the moment", element: 'fire', archetypes: ['maniac', 'pirate'] },
+                { text: "Rally the people around you", element: 'water', archetypes: ['diplomat', 'siren'] },
+                { text: "See opportunity in the chaos", element: 'air', archetypes: ['trickster', 'oracle'] },
+                { text: "Fall back to first principles and rebuild", element: 'earth', archetypes: ['king', 'mechanic'] }
             ]},
-            { id: 33, type: 'shadow', section: 'The Shadow', text: "What's the hardest for you to let go of?", options: [
-                { text: "A fight I didn't win", element: 'fire' },
-                { text: "Someone who hurt me", element: 'water' },
-                { text: "An opportunity I missed", element: 'air' },
-                { text: "Something I didn't finish properly", element: 'earth' }
+            { id: 22, type: 'moon', section: 'The Moon', text: "When facing a much stronger opponent, you:", options: [
+                { text: "Test them anyway - strength isn't everything", element: 'fire', archetypes: ['titan', 'maniac'] },
+                { text: "Look for allies and support", element: 'water', archetypes: ['diplomat', 'mirror'] },
+                { text: "Find their weakness and use it", element: 'air', archetypes: ['shadow', 'hypnotist'] },
+                { text: "Prepare meticulously and wait for your moment", element: 'earth', archetypes: ['wizard', 'tracker'] }
             ]},
             
-            // ARCHETYPE QUESTIONS (34-45) - Direct Identification
-            { id: 34, type: 'archetype', section: 'Your Archetype', text: "When you're at your BEST, which description fits you most?", options: [
-                { text: "I see through everything with piercing clarity", archetype: 'wizard', element: 'earth' },
-                { text: "I command respect and lead with natural authority", archetype: 'king', element: 'earth' },
-                { text: "I notice everything and miss nothing", archetype: 'tracker', element: 'earth' },
-                { text: "I build systems that actually work", archetype: 'mechanic', element: 'earth' }
+            // SHADOW QUESTIONS (23-33) - What you AVOID
+            { id: 23, type: 'shadow', section: 'The Shadow', text: "Which feeling do you work hardest to avoid?", options: [
+                { text: "Feeling weak or helpless", element: 'fire', archetypes: ['titan', 'alchemist'] },
+                { text: "Feeling disconnected or unloved", element: 'water', archetypes: ['knight', 'mirror'] },
+                { text: "Feeling trapped or limited", element: 'air', archetypes: ['hypnotist', 'trickster'] },
+                { text: "Feeling incompetent or unprepared", element: 'earth', archetypes: ['wizard', 'mechanic'] }
             ]},
-            { id: 35, type: 'archetype', section: 'Your Archetype', text: "Which role feels most natural when you're in flow?", options: [
-                { text: "I reflect truth back to people", archetype: 'mirror', element: 'water' },
-                { text: "I see what's coming before it arrives", archetype: 'oracle', element: 'air' },
-                { text: "I flip the script and change the game", archetype: 'trickster', element: 'air' },
-                { text: "I persist when everyone else quits", archetype: 'shadow', element: 'air' }
+            { id: 24, type: 'shadow', section: 'The Shadow', text: "What type of person triggers you most?", options: [
+                { text: "People who are passive or won't fight for themselves", element: 'fire', archetypes: ['titan', 'alchemist'] },
+                { text: "People who are cold and emotionally distant", element: 'water', archetypes: ['siren', 'diplomat'] },
+                { text: "People who are rigid and closed-minded", element: 'air', archetypes: ['oracle', 'trickster'] },
+                { text: "People who are sloppy and unreliable", element: 'earth', archetypes: ['tracker', 'king'] }
             ]},
-            { id: 36, type: 'archetype', section: 'Your Archetype', text: "What's your superpower in conflict?", options: [
-                { text: "I'm an unstoppable force of nature", archetype: 'titan', element: 'fire' },
-                { text: "I'm unpredictable and explosive", archetype: 'maniac', element: 'fire' },
-                { text: "I strike fast and seize opportunities", archetype: 'pirate', element: 'fire' },
-                { text: "I transform pressure into power", archetype: 'alchemist', element: 'fire' }
+            { id: 25, type: 'shadow', section: 'The Shadow', text: "What criticism cuts deepest?", options: [
+                { text: "That I'm weak or ineffective", element: 'fire', archetypes: ['pirate', 'titan'] },
+                { text: "That I'm uncaring or selfish", element: 'water', archetypes: ['knight', 'diplomat'] },
+                { text: "That I'm boring or predictable", element: 'air', archetypes: ['shadow', 'hypnotist'] },
+                { text: "That I don't know what I'm doing", element: 'earth', archetypes: ['wizard', 'mechanic'] }
             ]},
-            { id: 37, type: 'archetype', section: 'Your Archetype', text: "How do you typically influence others?", options: [
-                { text: "I draw people to me magnetically", archetype: 'siren', element: 'water' },
-                { text: "I plant ideas that take root", archetype: 'hypnotist', element: 'air' },
-                { text: "I build trust through transparency", archetype: 'diplomat', element: 'water' },
-                { text: "I earn loyalty through dedication", archetype: 'knight', element: 'water' }
+            { id: 26, type: 'shadow', section: 'The Shadow', text: "What do you secretly judge others for?", options: [
+                { text: "Giving up too easily", element: 'fire', archetypes: ['pirate', 'alchemist'] },
+                { text: "Being fake or inauthentic", element: 'water', archetypes: ['siren', 'mirror'] },
+                { text: "Missing the obvious", element: 'air', archetypes: ['oracle', 'hypnotist'] },
+                { text: "Being disorganized or lazy", element: 'earth', archetypes: ['tracker', 'king'] }
             ]},
-            { id: 38, type: 'archetype', section: 'Your Archetype', text: "What do people underestimate about you?", options: [
-                { text: "My intensity - they don't see the fire until it's too late", archetype: 'titan', element: 'fire' },
-                { text: "My patience - I wait longer than they expect", archetype: 'tracker', element: 'earth' },
-                { text: "My depth - they see the surface, not the ocean", archetype: 'mirror', element: 'water' },
-                { text: "My strategy - they think I'm random when I'm precise", archetype: 'trickster', element: 'air' }
+            { id: 27, type: 'shadow', section: 'The Shadow', text: "What are you most afraid of becoming?", options: [
+                { text: "Someone who doesn't matter", element: 'fire', archetypes: ['titan', 'maniac'] },
+                { text: "Someone who ends up alone", element: 'water', archetypes: ['knight', 'siren'] },
+                { text: "Someone ordinary and forgettable", element: 'air', archetypes: ['trickster', 'shadow'] },
+                { text: "Someone who wasted their potential", element: 'earth', archetypes: ['wizard', 'mechanic'] }
             ]},
-            { id: 39, type: 'archetype', section: 'Your Archetype', text: "When you need to solve a problem, what's your approach?", options: [
-                { text: "Overwhelm it with force and will", archetype: 'maniac', element: 'fire' },
-                { text: "Analyze it from every angle until I see the truth", archetype: 'wizard', element: 'earth' },
-                { text: "Feel my way through it intuitively", archetype: 'oracle', element: 'air' },
-                { text: "Build a systematic process to solve it", archetype: 'mechanic', element: 'earth' }
+            { id: 28, type: 'shadow', section: 'The Shadow', text: "What do you rarely admit you need?", options: [
+                { text: "Rest and recovery", element: 'fire', archetypes: ['maniac', 'alchemist'] },
+                { text: "Validation and reassurance", element: 'water', archetypes: ['mirror', 'siren'] },
+                { text: "Structure and routine", element: 'air', archetypes: ['trickster', 'oracle'] },
+                { text: "Help from others", element: 'earth', archetypes: ['king', 'tracker'] }
             ]},
-            { id: 40, type: 'archetype', section: 'Your Archetype', text: "What keeps you grounded?", options: [
-                { text: "My sense of mission and purpose", archetype: 'king', element: 'earth' },
-                { text: "The people I'm loyal to", archetype: 'knight', element: 'water' },
-                { text: "My craft and competence", archetype: 'alchemist', element: 'fire' },
-                { text: "My independence and freedom", archetype: 'pirate', element: 'fire' }
+            { id: 29, type: 'shadow', section: 'The Shadow', text: "What do you secretly wish you had more of?", options: [
+                { text: "Patience and calm", element: 'fire', archetypes: ['pirate', 'maniac'] },
+                { text: "Independence and boundaries", element: 'water', archetypes: ['diplomat', 'mirror'] },
+                { text: "Consistency and follow-through", element: 'air', archetypes: ['shadow', 'hypnotist'] },
+                { text: "Spontaneity and flexibility", element: 'earth', archetypes: ['mechanic', 'wizard'] }
             ]},
-            { id: 41, type: 'archetype', section: 'Your Archetype', text: "How do you handle being misunderstood?", options: [
-                { text: "I don't explain - they'll understand eventually", archetype: 'shadow', element: 'air' },
-                { text: "I feel it deeply but don't always show it", archetype: 'siren', element: 'water' },
-                { text: "I redirect their perception strategically", archetype: 'hypnotist', element: 'air' },
-                { text: "I build bridges until we're aligned", archetype: 'diplomat', element: 'water' }
+            { id: 30, type: 'shadow', section: 'The Shadow', text: "What part of yourself do you hide from others?", options: [
+                { text: "My vulnerability and fear", element: 'fire', archetypes: ['titan', 'pirate'] },
+                { text: "My need for approval", element: 'water', archetypes: ['knight', 'diplomat'] },
+                { text: "My loneliness and isolation", element: 'air', archetypes: ['oracle', 'shadow'] },
+                { text: "My uncertainty and doubt", element: 'earth', archetypes: ['king', 'tracker'] }
             ]},
-            { id: 42, type: 'archetype', section: 'Your Archetype', text: "What's your relationship with rules?", options: [
-                { text: "I make them", archetype: 'king', element: 'earth' },
-                { text: "I bend them to serve a purpose", archetype: 'trickster', element: 'air' },
-                { text: "I follow the ones that make sense", archetype: 'mechanic', element: 'earth' },
-                { text: "Rules are suggestions at best", archetype: 'pirate', element: 'fire' }
+            { id: 31, type: 'shadow', section: 'The Shadow', text: "When do you feel most like an imposter?", options: [
+                { text: "When I have to be vulnerable", element: 'fire', archetypes: ['alchemist', 'pirate'] },
+                { text: "When I have to be assertive", element: 'water', archetypes: ['mirror', 'diplomat'] },
+                { text: "When I have to commit long-term", element: 'air', archetypes: ['trickster', 'hypnotist'] },
+                { text: "When I have to improvise without data", element: 'earth', archetypes: ['wizard', 'mechanic'] }
             ]},
-            { id: 43, type: 'archetype', section: 'Your Archetype', text: "What do you value most in relationships?", options: [
-                { text: "Respect and recognition", archetype: 'titan', element: 'fire' },
-                { text: "Deep emotional connection", archetype: 'mirror', element: 'water' },
-                { text: "Mutual understanding and insight", archetype: 'oracle', element: 'air' },
-                { text: "Reliability and trust", archetype: 'tracker', element: 'earth' }
+            { id: 32, type: 'shadow', section: 'The Shadow', text: "What drains you fastest?", options: [
+                { text: "Being held back or slowed down", element: 'fire', archetypes: ['titan', 'alchemist'] },
+                { text: "Conflict and disconnection", element: 'water', archetypes: ['diplomat', 'mirror'] },
+                { text: "Repetition and predictability", element: 'air', archetypes: ['shadow', 'oracle'] },
+                { text: "Chaos and lack of clear process", element: 'earth', archetypes: ['mechanic', 'king'] }
             ]},
-            { id: 44, type: 'archetype', section: 'Your Archetype', text: "When everything is on the line, what takes over?", options: [
-                { text: "Pure instinct and adaptability", archetype: 'alchemist', element: 'fire' },
-                { text: "Cold, clear analysis", archetype: 'wizard', element: 'earth' },
-                { text: "Unwavering loyalty to what matters", archetype: 'knight', element: 'water' },
-                { text: "Chaotic but effective improvisation", archetype: 'maniac', element: 'fire' }
+            { id: 33, type: 'shadow', section: 'The Shadow', text: "What's hardest for you to let go of?", options: [
+                { text: "A fight I haven't won", element: 'fire', archetypes: ['alchemist', 'maniac'] },
+                { text: "A relationship that's ending", element: 'water', archetypes: ['knight', 'mirror'] },
+                { text: "An idea that didn't land", element: 'air', archetypes: ['hypnotist', 'trickster'] },
+                { text: "A project before it's truly complete", element: 'earth', archetypes: ['tracker', 'wizard'] }
             ]},
-            { id: 45, type: 'archetype', section: 'Your Archetype', text: "How do you want to be remembered?", options: [
-                { text: "As someone who changed the game", archetype: 'hypnotist', element: 'air' },
-                { text: "As someone who never gave up", archetype: 'shadow', element: 'air' },
-                { text: "As someone who brought people together", archetype: 'diplomat', element: 'water' },
-                { text: "As someone who made everyone feel seen", archetype: 'siren', element: 'water' }
+            
+            // ARCHETYPE QUESTIONS (34-45) - Direct Identification (behavioral only, no names)
+            { id: 34, type: 'archetype', section: 'Core Patterns', text: "What comes most naturally to you?", options: [
+                { text: "Seeing the truth beneath the surface", archetype: 'wizard' },
+                { text: "Taking charge and setting direction", archetype: 'king' },
+                { text: "Noticing patterns others miss", archetype: 'tracker' },
+                { text: "Creating order from complexity", archetype: 'mechanic' }
+            ]},
+            { id: 35, type: 'archetype', section: 'Core Patterns', text: "In flow, what role do you play?", options: [
+                { text: "I show people truths about themselves", archetype: 'mirror' },
+                { text: "I sense what's coming before it arrives", archetype: 'oracle' },
+                { text: "I change the game when others play by rules", archetype: 'trickster' },
+                { text: "I persist long after others have quit", archetype: 'shadow' }
+            ]},
+            { id: 36, type: 'archetype', section: 'Core Patterns', text: "In conflict, what's your edge?", options: [
+                { text: "Relentless determination through pure will", archetype: 'titan' },
+                { text: "Rapid adaptation and high-speed reads", archetype: 'maniac' },
+                { text: "Strike fast and seize what I want", archetype: 'pirate' },
+                { text: "Transform the pressure into fuel", archetype: 'alchemist' }
+            ]},
+            { id: 37, type: 'archetype', section: 'Core Patterns', text: "How do you influence others?", options: [
+                { text: "Through magnetic presence that draws them in", archetype: 'siren' },
+                { text: "By planting ideas they think are their own", archetype: 'hypnotist' },
+                { text: "Through transparent trust-building over time", archetype: 'diplomat' },
+                { text: "By earning loyalty through unwavering dedication", archetype: 'knight' }
+            ]},
+            { id: 38, type: 'archetype', section: 'Core Patterns', text: "What do people underestimate about you?", options: [
+                { text: "How deeply I see into their real motivations", archetype: 'wizard' },
+                { text: "How much I notice and remember", archetype: 'tracker' },
+                { text: "How long I can wait and watch unseen", archetype: 'shadow' },
+                { text: "How quickly I can shift the entire frame", archetype: 'trickster' }
+            ]},
+            { id: 39, type: 'archetype', section: 'Core Patterns', text: "When things get hard, how do you win?", options: [
+                { text: "Outwork and outlast everyone", archetype: 'titan' },
+                { text: "Find order in the chaos faster than anyone", archetype: 'maniac' },
+                { text: "Turn the difficulty itself into my advantage", archetype: 'alchemist' },
+                { text: "Hold the line when everyone else breaks", archetype: 'oracle' }
+            ]},
+            { id: 40, type: 'archetype', section: 'Core Patterns', text: "What do you protect most fiercely?", options: [
+                { text: "My sense of purpose and mission", archetype: 'king' },
+                { text: "The people I'm loyal to", archetype: 'knight' },
+                { text: "My craft and what I'm building", archetype: 'mechanic' },
+                { text: "My freedom and independence", archetype: 'pirate' }
+            ]},
+            { id: 41, type: 'archetype', section: 'Core Patterns', text: "When people misread you, what happens?", options: [
+                { text: "I don't explain - they'll figure it out or they won't", archetype: 'mirror' },
+                { text: "I feel it deeply but don't always show it", archetype: 'siren' },
+                { text: "I work to shift their perception over time", archetype: 'hypnotist' },
+                { text: "I keep building bridges until we understand each other", archetype: 'diplomat' }
+            ]},
+            { id: 42, type: 'archetype', section: 'Core Patterns', text: "What's your relationship with rules?", options: [
+                { text: "I set them for others to follow", archetype: 'king' },
+                { text: "I bend them when they don't serve the goal", archetype: 'trickster' },
+                { text: "I follow the ones that make sense", archetype: 'mechanic' },
+                { text: "I treat them as suggestions at best", archetype: 'pirate' }
+            ]},
+            { id: 43, type: 'archetype', section: 'Core Patterns', text: "What matters most in close relationships?", options: [
+                { text: "Being respected and recognized", archetype: 'titan' },
+                { text: "Deep emotional understanding without words", archetype: 'mirror' },
+                { text: "Shared insight and mental connection", archetype: 'oracle' },
+                { text: "Reliability and consistent presence", archetype: 'tracker' }
+            ]},
+            { id: 44, type: 'archetype', section: 'Core Patterns', text: "When everything's on the line, what takes over?", options: [
+                { text: "Pure instinct from somewhere deeper", archetype: 'alchemist' },
+                { text: "Calm analytical precision", archetype: 'wizard' },
+                { text: "Absolute commitment to what matters", archetype: 'knight' },
+                { text: "Rapid improvisation until something works", archetype: 'maniac' }
+            ]},
+            { id: 45, type: 'archetype', section: 'Core Patterns', text: "How do you want to be remembered?", options: [
+                { text: "That I changed how people think", archetype: 'hypnotist' },
+                { text: "That I never gave up no matter what", archetype: 'shadow' },
+                { text: "That I brought people together", archetype: 'diplomat' },
+                { text: "That I made people feel truly seen", archetype: 'siren' }
             ]}
         ];
-        
-        // Archetype metadata
-        const archetypes = {
-            // Fire
-            titan: { name: 'Titan', element: 'fire', desc: 'The Unstoppable Force' },
-            maniac: { name: 'Maniac', element: 'fire', desc: 'The Explosive Chaos' },
-            pirate: { name: 'Pirate', element: 'fire', desc: 'The Opportunistic Striker' },
-            alchemist: { name: 'Alchemist', element: 'fire', desc: 'The Pressure Transmuter' },
-            // Water
-            mirror: { name: 'Mirror', element: 'water', desc: 'The Truth Reflector' },
-            siren: { name: 'Siren', element: 'water', desc: 'The Heart Magnet' },
-            diplomat: { name: 'Diplomat', element: 'water', desc: 'The Bridge Builder' },
-            knight: { name: 'Knight', element: 'water', desc: 'The Loyal Protector' },
-            // Air
-            hypnotist: { name: 'Hypnotist', element: 'air', desc: 'The Mind Shaper' },
-            oracle: { name: 'Oracle', element: 'air', desc: 'The Future Seer' },
-            trickster: { name: 'Trickster', element: 'air', desc: 'The Reality Flipper' },
-            shadow: { name: 'Shadow', element: 'air', desc: 'The Persistent Truth' },
-            // Earth
-            wizard: { name: 'Wizard', element: 'earth', desc: 'The Clarity Wielder' },
-            king: { name: 'King', element: 'earth', desc: 'The Natural Authority' },
-            tracker: { name: 'Tracker', element: 'earth', desc: 'The Patient Predator' },
-            mechanic: { name: 'Mechanic', element: 'earth', desc: 'The System Builder' }
-        };
-        
+
         // State
         let currentQuestion = 0;
         let answers = {};
-        let isSharedView = false;
-        
-        // ==========================================
-        // QUIZ LOGIC
-        // ==========================================
-        
+        let generatedPdfBlob = null;
+
+        // Initialize
         function init() {
-            // Check for shared URL params
+            // Check for shared results in URL
             const params = new URLSearchParams(window.location.search);
-            if (params.has('s') && params.has('a')) {
+            if (params.has('s')) {
                 loadSharedResults(params);
             } else {
-                renderQuestion();
+                showQuestion(0);
             }
         }
-        
-        function renderQuestion() {
-            const q = questions[currentQuestion];
-            const questionCard = document.getElementById('question-card');
+
+        function showQuestion(index) {
+            const q = questions[index];
+            const card = document.getElementById('question-card');
+            const answer = answers[q.id] || { most: null, least: null };
             
-            let html = `
-                <div class="question-section">${q.section}</div>
-                <div class="question-text">${q.id}. ${q.text}</div>
+            let optionsHtml = q.options.map((opt, i) => {
+                const letter = String.fromCharCode(65 + i);
+                let classes = 'option';
+                let badge = '';
+                
+                if (answer.most === i) {
+                    classes += ' selected-most';
+                    badge = '<span class="selection-badge badge-most">MOST</span>';
+                } else if (answer.least === i) {
+                    classes += ' selected-least';
+                    badge = '<span class="selection-badge badge-least">LEAST</span>';
+                }
+                
+                return `
+                    <div class="${classes}" onclick="selectOption(${i})" data-index="${i}">
+                        <span class="option-letter">${letter}</span>
+                        <span class="option-text">${opt.text}</span>
+                        ${badge}
+                    </div>
+                `;
+            }).join('');
+            
+            card.innerHTML = `
+                <span class="question-section">${q.section}</span>
+                <div class="question-text">${q.text}</div>
+                <div class="options">${optionsHtml}</div>
             `;
             
-            if (q.type === 'archetype') {
-                // Single select for archetype questions
-                html += '<div class="archetype-grid">';
-                q.options.forEach((opt, i) => {
-                    const selected = answers[q.id] === i ? 'selected' : '';
-                    html += `
-                        <div class="archetype-option ${selected}" onclick="selectArchetype(${i})">
-                            <div class="archetype-name">${archetypes[opt.archetype].name}</div>
-                            <div class="archetype-element">${opt.text}</div>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-            } else {
-                // Ranking for Sun/Moon/Shadow questions
-                const currentRanking = answers[q.id] || [];
-                
-                html += '<div class="options">';
-                q.options.forEach((opt, i) => {
-                    const rank = currentRanking.indexOf(i);
-                    const isRanked = rank !== -1;
-                    html += `
-                        <div class="option ${isRanked ? 'ranked' : ''}" onclick="rankOption(${i})">
-                            <div class="option-label">${String.fromCharCode(65 + i)}</div>
-                            <div>${opt.text}</div>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-                
-                // Show ranking
-                if (currentRanking.length > 0) {
-                    html += '<div class="ranking-display"><h4>Your Ranking:</h4>';
-                    currentRanking.forEach((optIdx, rank) => {
-                        html += `
-                            <div class="rank-item">
-                                <div class="rank-number rank-${rank + 1}">${rank + 1}</div>
-                                <div>${q.options[optIdx].text}</div>
-                            </div>
-                        `;
-                    });
-                    html += '</div>';
-                }
-            }
-            
-            questionCard.innerHTML = html;
-            
             // Update progress
-            document.getElementById('progress-fill').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
-            document.getElementById('current-q').textContent = currentQuestion + 1;
-            document.getElementById('total-q').textContent = questions.length;
+            document.getElementById('progress-fill').style.width = `${((index + 1) / questions.length) * 100}%`;
+            document.getElementById('current-q').textContent = index + 1;
             
-            // Update buttons
-            const q_type = questions[currentQuestion].type;
-            const isComplete = q_type === 'archetype' 
-                ? answers[questions[currentQuestion].id] !== undefined
-                : (answers[questions[currentQuestion].id] || []).length === 4;
-            
-            document.getElementById('next-btn').disabled = !isComplete;
-            document.getElementById('next-btn').textContent = currentQuestion === questions.length - 1 ? 'See Results' : 'Next →';
-            document.getElementById('back-btn').style.display = currentQuestion > 0 ? 'inline-block' : 'none';
-            document.getElementById('undo-btn').style.display = q_type !== 'archetype' && (answers[questions[currentQuestion].id] || []).length > 0 ? 'inline-block' : 'none';
-            document.getElementById('reset-btn').style.display = q_type !== 'archetype' && (answers[questions[currentQuestion].id] || []).length > 0 ? 'inline-block' : 'none';
+            // Update navigation
+            document.getElementById('back-btn').style.display = index > 0 ? 'block' : 'none';
+            updateNextButton();
         }
-        
-        function rankOption(optIdx) {
+
+        function selectOption(index) {
             const q = questions[currentQuestion];
-            if (!answers[q.id]) answers[q.id] = [];
-            if (answers[q.id].includes(optIdx)) return;
-            if (answers[q.id].length >= 4) return;
-            
-            answers[q.id].push(optIdx);
-            renderQuestion();
-        }
-        
-        function selectArchetype(optIdx) {
-            const q = questions[currentQuestion];
-            answers[q.id] = optIdx;
-            renderQuestion();
-        }
-        
-        function undoRank() {
-            const q = questions[currentQuestion];
-            if (answers[q.id] && answers[q.id].length > 0) {
-                answers[q.id].pop();
-                renderQuestion();
+            if (!answers[q.id]) {
+                answers[q.id] = { most: null, least: null };
             }
-        }
-        
-        function resetQuestion() {
-            const q = questions[currentQuestion];
-            answers[q.id] = [];
-            renderQuestion();
-        }
-        
-        function goBack() {
-            if (currentQuestion > 0) {
-                currentQuestion--;
-                renderQuestion();
+            
+            const answer = answers[q.id];
+            
+            // If clicking already selected option, deselect it
+            if (answer.most === index) {
+                answer.most = null;
+            } else if (answer.least === index) {
+                answer.least = null;
+            } else if (answer.most === null) {
+                answer.most = index;
+            } else if (answer.least === null) {
+                answer.least = index;
             }
+            
+            showQuestion(currentQuestion);
         }
-        
+
+        function updateNextButton() {
+            const q = questions[currentQuestion];
+            const answer = answers[q.id];
+            const btn = document.getElementById('next-btn');
+            
+            const isComplete = answer && answer.most !== null && answer.least !== null;
+            btn.disabled = !isComplete;
+            btn.textContent = currentQuestion === questions.length - 1 ? 'See Results' : 'Next →';
+        }
+
         function nextQuestion() {
             if (currentQuestion < questions.length - 1) {
                 currentQuestion++;
-                renderQuestion();
-                window.scrollTo(0, 0);
+                showQuestion(currentQuestion);
             } else {
-                showLoading();
+                calculateResults();
             }
         }
-        
-        function showLoading() {
-            document.getElementById('quiz-container').style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
-            
-            setTimeout(() => {
-                document.getElementById('loading').style.display = 'none';
-                showResults();
-            }, 2000);
+
+        function goBack() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
         }
-        
-        // ==========================================
-        // RESULTS CALCULATION
-        // ==========================================
-        
-        function calculateScores() {
-            const scores = {
+
+        function calculateResults() {
+            // Initialize scores
+            const elementScores = {
                 sun: { fire: 0, water: 0, air: 0, earth: 0 },
                 moon: { fire: 0, water: 0, air: 0, earth: 0 },
                 shadow: { fire: 0, water: 0, air: 0, earth: 0 }
             };
-            const archetypeSelections = [];
             
+            const archetypeScores = {
+                sun: {},
+                moon: {},
+                shadow: {}
+            };
+            
+            // Initialize all archetypes to 0
+            Object.keys(archetypeData).forEach(arch => {
+                archetypeScores.sun[arch] = 0;
+                archetypeScores.moon[arch] = 0;
+                archetypeScores.shadow[arch] = 0;
+            });
+            
+            const directArchetypeVotes = {};
+            Object.keys(archetypeData).forEach(arch => {
+                directArchetypeVotes[arch] = 0;
+            });
+            
+            // Score each answer
             questions.forEach(q => {
+                const answer = answers[q.id];
+                if (!answer) return;
+                
                 if (q.type === 'archetype') {
-                    const optIdx = answers[q.id];
-                    if (optIdx !== undefined) {
-                        archetypeSelections.push(q.options[optIdx].archetype);
+                    // Direct archetype selection
+                    if (answer.most !== null) {
+                        const arch = q.options[answer.most].archetype;
+                        directArchetypeVotes[arch] += 2;
+                    }
+                    if (answer.least !== null) {
+                        const arch = q.options[answer.least].archetype;
+                        directArchetypeVotes[arch] -= 1;
                     }
                 } else {
-                    const ranking = answers[q.id] || [];
-                    const points = [4, 3, 2, 1];
-                    ranking.forEach((optIdx, rank) => {
-                        const element = q.options[optIdx].element;
-                        scores[q.type][element] += points[rank];
-                    });
+                    // Element-based questions
+                    const layer = q.type;
+                    
+                    if (answer.most !== null) {
+                        const opt = q.options[answer.most];
+                        elementScores[layer][opt.element] += 4;
+                        opt.archetypes.forEach(arch => {
+                            archetypeScores[layer][arch] += 2;
+                        });
+                    }
+                    
+                    if (answer.least !== null) {
+                        const opt = q.options[answer.least];
+                        elementScores[layer][opt.element] += 1;
+                        opt.archetypes.forEach(arch => {
+                            archetypeScores[layer][arch] += 0.5;
+                        });
+                    }
                 }
             });
             
-            return { scores, archetypeSelections };
-        }
-        
-        function getDominantElement(elementScores) {
-            const sorted = Object.entries(elementScores).sort((a, b) => b[1] - a[1]);
-            const total = sorted.reduce((sum, [_, val]) => sum + val, 0);
-            return {
-                element: sorted[0][0],
-                score: sorted[0][1],
-                percentage: Math.round(sorted[0][1] / total * 100),
-                gap: sorted[0][1] - sorted[1][1],
-                all: sorted
-            };
-        }
-        
-        function getConfidenceLevel(gap, total) {
-            const gapPercentage = gap / total * 100;
-            if (gapPercentage > 20) return { level: 'Clear', color: '#27ae60' };
-            if (gapPercentage > 10) return { level: 'Moderate', color: '#f39c12' };
-            return { level: 'Mixed', color: '#e74c3c' };
-        }
-        
-        // ==========================================
-        // DEEP ANALYSIS CONTENT
-        // ==========================================
-        
-        const deepAnalysis = {
-            fire: {
-                blindSpots: [
-                    "You may bulldoze others without realizing it - your intensity can feel like attack even when you're just being you.",
-                    "Difficulty recognizing when rest is strategic, not weakness. You push when pausing would serve better.",
-                    "Tendency to interpret patience as passivity in others, missing the power in stillness.",
-                    "May miss subtle emotional cues because you're focused on action and results."
-                ],
-                exploitVulnerabilities: [
-                    "Your need for forward motion can be used against you - opponents can bait you into action when waiting would win.",
-                    "Ego attachment to being seen as strong makes you reluctant to fold or back down.",
-                    "Impatience is your biggest leak - you'll force action when the math says wait.",
-                    "Challenge your strength directly and watch you over-commit to prove a point."
-                ],
-                careerAdvice: [
-                    "Roles requiring drive: Entrepreneurship, Sales, Leadership, Crisis Management, Competitive fields.",
-                    "Your natural intensity is an asset in high-stakes environments where others freeze.",
-                    "Build in recovery systems - you'll burn out without them.",
-                    "Learn to channel aggression into strategic pressure rather than constant force."
-                ],
-                lifeAdvice: [
-                    "Your fire is a gift, not a flaw to manage. Learn to aim it, not suppress it.",
-                    "Relationships need your presence, not just your protection. Slow down with people who matter.",
-                    "Victory without connection leaves you empty. The achievement isn't enough alone.",
-                    "Rest is how fire regenerates. Burning constantly creates ash, not power."
-                ]
-            },
-            water: {
-                blindSpots: [
-                    "You absorb others' emotions without realizing you're carrying their weight, not yours.",
-                    "Difficulty distinguishing between intuition and projection - you feel what you expect to feel.",
-                    "May avoid necessary conflict to preserve harmony, letting problems fester.",
-                    "Tendency to lose yourself in relationships, forgetting your own needs exist."
-                ],
-                exploitVulnerabilities: [
-                    "Your need for connection can be leveraged - emotional appeals bypass your logical defenses.",
-                    "Reluctance to hurt feelings makes you predictable in conflict - opponents know you'll soften.",
-                    "Guilt is your control switch - anyone who can trigger it can steer you.",
-                    "You'll stay too long in bad situations because leaving feels like abandonment."
-                ],
-                careerAdvice: [
-                    "Roles requiring emotional intelligence: Counseling, HR, Customer Success, Healthcare, Education.",
-                    "Your ability to read people is valuable in negotiation and leadership.",
-                    "Set boundaries in helping roles or you'll burn out absorbing everyone's pain.",
-                    "Your intuition for people is data - trust it but verify it."
-                ],
-                lifeAdvice: [
-                    "Your sensitivity is a superpower, not a weakness. Don't let anyone make you feel otherwise.",
-                    "Being seen fully requires showing the parts of yourself you think are too much.",
-                    "Boundaries aren't walls - they're how you stay you while being with others.",
-                    "You can't pour from an empty cup. Self-care isn't selfish, it's necessary."
-                ]
-            },
-            air: {
-                blindSpots: [
-                    "You can analyze yourself out of feeling - intellectualizing emotions to avoid them.",
-                    "Tendency to prioritize interesting over important, chasing novelty at the expense of depth.",
-                    "May dismiss others as 'boring' when they're actually offering stability you secretly need.",
-                    "Your detachment can feel like abandonment to people who love you."
-                ],
-                exploitVulnerabilities: [
-                    "Your need for mental stimulation makes you easy to distract - shiny objects pull your focus.",
-                    "Commitment feels like constraint, so you'll choose freedom over advantage.",
-                    "Boredom is your kryptonite - opponents can outlast you by being consistent.",
-                    "You overthink simple situations, creating complexity where none exists."
-                ],
-                careerAdvice: [
-                    "Roles requiring innovation: Strategy, Creative Direction, Research, Technology, Consulting.",
-                    "Your pattern recognition is valuable in complex problem-solving environments.",
-                    "Build systems that let you move between projects - you need variety to thrive.",
-                    "Your insights are only valuable if you communicate them - learn to land the plane."
-                ],
-                lifeAdvice: [
-                    "Being understood matters less than being present. Stop explaining, start experiencing.",
-                    "Freedom without purpose is just wandering. Find something worth committing to.",
-                    "Your mind is a gift, but you live in a body too. Don't forget the vessel.",
-                    "Some things can only be understood by doing them, not thinking about them."
-                ]
-            },
-            earth: {
-                blindSpots: [
-                    "Your need for control can strangle the life out of things that need room to grow.",
-                    "Tendency to mistake rigidity for strength - the oak breaks, the willow bends.",
-                    "May dismiss intuition and emotion as unreliable, missing crucial data.",
-                    "Perfectionism paralysis - waiting for 'right' when 'good enough' would move you forward."
-                ],
-                exploitVulnerabilities: [
-                    "Your need for order can be disrupted by chaos - throw variables at you and watch you freeze.",
-                    "Attachment to 'the right way' makes you predictable and exploitable.",
-                    "You'll over-prepare for likely scenarios while black swans hit you sideways.",
-                    "Challenge your competence and watch you over-explain or over-prove."
-                ],
-                careerAdvice: [
-                    "Roles requiring precision: Engineering, Operations, Finance, Quality Assurance, Project Management.",
-                    "Your reliability is rare - most people can't do what they say they'll do.",
-                    "Learn to distinguish between standards that serve you and perfectionism that blocks you.",
-                    "Your judgment is sound, but trust others' competence more."
-                ],
-                lifeAdvice: [
-                    "Control is illusion. The best you can do is influence - and that's enough.",
-                    "Being right matters less than being connected. Win the argument, lose the relationship.",
-                    "Let things be imperfect. Life is messy. That's not failure, that's reality.",
-                    "Your worth isn't your output. You matter even when you're not producing."
-                ]
-            }
-        };
-        
-        const archetypeInsights = {
-            // Fire Archetypes
-            titan: {
-                poker: "You outlast the table. Use your endurance strategically - late in sessions, you're still sharp while others fade.",
-                blindSpot: "Your persistence becomes a leak when you can't fold. Same strength that wins becomes stubbornness that bleeds chips.",
-                growth: "Learn that rest is strategic, not weakness. Controlled burn beats constant blaze."
-            },
-            maniac: {
-                poker: "Your unpredictability is an asset - opponents never know what you'll do. Use controlled chaos to keep them off-balance.",
-                blindSpot: "You mistake chaos for strategy. Sometimes the 'boring' play is the winning play.",
-                growth: "Channel the chaos intentionally. Random fire burns yourself - directed fire wins wars."
-            },
-            pirate: {
-                poker: "You're the opportunistic striker. Identify moments of weakness and attack with precision.",
-                blindSpot: "Your independence can become isolation. You miss opportunities by not building alliances.",
-                growth: "Freedom is better with resources. Learn to build before you raid."
-            },
-            alchemist: {
-                poker: "You transmute pressure into performance. The bigger the moment, the better you play.",
-                blindSpot: "You create pressure when none exists because you're addicted to transformation.",
-                growth: "Not everything needs to be turned into something else. Some things are fine as they are."
-            },
-            // Water Archetypes
-            mirror: {
-                poker: "You reflect truth back to people, making them uncomfortable. Use this to put opponents on tilt.",
-                blindSpot: "You lose yourself reflecting others. You forgot what your own face looks like.",
-                growth: "You can show truth without disappearing into it. Stay present while reflecting."
-            },
-            siren: {
-                poker: "Your presence draws attention and creates connection. Use the distraction strategically.",
-                blindSpot: "You confuse being desired with being known. The mask is comfortable but lonely.",
-                growth: "Let someone see behind the magnetism. Being loved for your truth beats being desired for your performance."
-            },
-            diplomat: {
-                poker: "You build trust through transparency. Long game - create alliances that serve you.",
-                blindSpot: "You over-invest in harmony. Sometimes the bridge needs to burn.",
-                growth: "Diplomacy with teeth. You can be kind AND have boundaries."
-            },
-            knight: {
-                poker: "Loyalty is your edge - you hold lines others would abandon. Use this to bluff the unbluffable.",
-                blindSpot: "You absorb too much for too long. The dam breaks eventually.",
-                growth: "Loyalty to self first. You can't protect anyone if you're depleted."
-            },
-            // Air Archetypes
-            hypnotist: {
-                poker: "You plant ideas that take root. Subtle influence beats brute force.",
-                blindSpot: "You manipulate yourself as much as others. Which of your thoughts are even yours?",
-                growth: "Use the power for truth, not just advantage. Authentic influence compounds."
-            },
-            oracle: {
-                poker: "You see what's coming before others do. Pattern recognition is your edge.",
-                blindSpot: "You confuse prediction with control. Seeing the future doesn't mean you can change it.",
-                growth: "Speak what you see, even when it's uncomfortable. Your vision serves others when shared."
-            },
-            trickster: {
-                poker: "You flip scripts and change games. When you play by different rules, you set the rules.",
-                blindSpot: "You value cleverness over effectiveness. Sometimes the obvious play wins.",
-                growth: "Disruption with purpose. Chaos for chaos's sake is just noise."
-            },
-            shadow: {
-                poker: "You persist when everyone else quits. Your patience is your weapon.",
-                blindSpot: "You confuse stubbornness with authenticity. Sometimes folding IS the truth.",
-                growth: "Darkness serves light. Your persistence is a gift when it's in service of something real."
-            },
-            // Earth Archetypes
-            wizard: {
-                poker: "You see through everything. Use clarity as a weapon - name what others can't see.",
-                blindSpot: "Your clarity can be cold. Truth without compassion just wounds.",
-                growth: "Learn to deliver truth in service of growth, not just accuracy."
-            },
-            king: {
-                poker: "Natural authority - you command the table just by sitting down. Use presence strategically.",
-                blindSpot: "Your kingdom can become a cage. You protect a throne nobody's attacking.",
-                growth: "Lead through service, not control. Real authority is given, not taken."
-            },
-            tracker: {
-                poker: "You notice everything. Information is your edge - you see what they're hiding.",
-                blindSpot: "You gather forever without acting. Data without decisions is just noise.",
-                growth: "Act on 80% information. Perfect knowledge never comes."
-            },
-            mechanic: {
-                poker: "You build systems that work. Your edge is consistency - you don't leak like others do.",
-                blindSpot: "Your systems can become prisons. The map isn't the territory.",
-                growth: "Build systems for humans, not robots. Leave room for adaptation."
-            }
-        };
-        
-        // ==========================================
-        // RESULTS DISPLAY
-        // ==========================================
-        
-        function showResults() {
-            const { scores, archetypeSelections } = calculateScores();
-            const sunDom = getDominantElement(scores.sun);
-            const moonDom = getDominantElement(scores.moon);
-            const shadowDom = getDominantElement(scores.shadow);
-            
-            // Find most selected archetype
-            const archetypeCount = {};
-            archetypeSelections.forEach(a => {
-                archetypeCount[a] = (archetypeCount[a] || 0) + 1;
+            // Add direct votes to all layers proportionally
+            Object.keys(directArchetypeVotes).forEach(arch => {
+                const votes = directArchetypeVotes[arch];
+                archetypeScores.sun[arch] += votes;
+                archetypeScores.moon[arch] += votes;
+                archetypeScores.shadow[arch] += votes;
             });
-            const topArchetype = Object.entries(archetypeCount).sort((a, b) => b[1] - a[1])[0];
+            
+            // Find top 2 archetypes per layer
+            const getTopArchetypes = (scores, n = 2) => {
+                return Object.entries(scores)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, n)
+                    .map(([arch, score]) => ({ archetype: arch, score }));
+            };
+            
+            const results = {
+                sun: {
+                    elements: elementScores.sun,
+                    topArchetypes: getTopArchetypes(archetypeScores.sun)
+                },
+                moon: {
+                    elements: elementScores.moon,
+                    topArchetypes: getTopArchetypes(archetypeScores.moon)
+                },
+                shadow: {
+                    elements: elementScores.shadow,
+                    topArchetypes: getTopArchetypes(archetypeScores.shadow)
+                }
+            };
+            
+            displayResults(results);
+        }
+
+        function displayResults(results) {
+            document.getElementById('quiz-container').style.display = 'none';
+            const container = document.getElementById('results-container');
+            container.style.display = 'block';
+            
+            const layers = [
+                { key: 'sun', icon: '☀️', title: 'Your Sun (The Mask)', desc: 'What you want the world to see', color: '#f39c12' },
+                { key: 'moon', icon: '🌙', title: 'Your Moon (Under Pressure)', desc: 'What emerges when the mask drops', color: '#9b59b6' },
+                { key: 'shadow', icon: '🌑', title: 'Your Shadow (The Avoided)', desc: 'What you hide and avoid', color: '#2c3e50' }
+            ];
             
             let html = `
                 <div class="results-header">
                     <h2>Your Archetype Profile</h2>
-                    <p>144 data points analyzed across 45 questions</p>
+                    <p>Based on 180 data points across 45 questions</p>
                 </div>
             `;
             
-            // Shared view notice
-            if (isSharedView) {
-                html = `
-                    <div class="shared-notice" style="display: block;">
-                        👁️ You're viewing someone else's results. <a href="${window.location.pathname}" style="color: #4facfe;">Take the quiz yourself</a>
-                    </div>
-                ` + html;
-            }
-            
-            // Sun Result
-            html += `
-                <div class="result-card sun">
-                    <h3>☀️ SUN: ${sunDom.element.toUpperCase()} (${sunDom.percentage}%)</h3>
-                    <span class="element-tag ${sunDom.element}">${sunDom.element.toUpperCase()}</span>
-                    <p><strong>The Mask</strong> - What you project to the world. This is your conscious presentation, the energy you lead with.</p>
-                    ${renderScoreBars(scores.sun)}
-                </div>
-            `;
-            
-            // Moon Result
-            html += `
-                <div class="result-card moon">
-                    <h3>🌙 MOON: ${moonDom.element.toUpperCase()} (${moonDom.percentage}%)</h3>
-                    <span class="element-tag ${moonDom.element}">${moonDom.element.toUpperCase()}</span>
-                    <p><strong>Under Pressure</strong> - What emerges when your mask drops. This is your stress response, not a choice but a reaction.</p>
-                    ${renderScoreBars(scores.moon)}
-                </div>
-            `;
-            
-            // Shadow Result
-            html += `
-                <div class="result-card shadow">
-                    <h3>🌑 SHADOW: ${shadowDom.element.toUpperCase()} (${shadowDom.percentage}%)</h3>
-                    <span class="element-tag ${shadowDom.element}">${shadowDom.element.toUpperCase()}</span>
-                    <p><strong>The Avoided</strong> - What you push away or judge in others. Your shadow contains both wounds and hidden gifts.</p>
-                    ${renderScoreBars(scores.shadow)}
-                </div>
-            `;
-            
-            // Primary Archetype
-            if (topArchetype) {
-                const arch = archetypes[topArchetype[0]];
+            layers.forEach(layer => {
+                const data = results[layer.key];
+                const maxElement = Math.max(...Object.values(data.elements));
+                
                 html += `
-                    <div class="result-card" style="border-color: #ffd700;">
-                        <h3>👑 PRIMARY ARCHETYPE: ${arch.name}</h3>
-                        <span class="element-tag ${arch.element}">${arch.element.toUpperCase()}</span>
-                        <p><strong>${arch.desc}</strong></p>
-                        <p style="margin-top: 10px; color: #888;">Selected ${topArchetype[1]} times across archetype questions</p>
-                    </div>
-                `;
-            }
-            
-            // PDF Section
-            html += `
-                <div class="pdf-section">
-                    <h3>📄 Your Full Report</h3>
-                    <p>Deep analysis including blind spots, exploit vulnerabilities, career advice, and life guidance. ~10 pages.</p>
-                    <div class="pdf-buttons">
-                        <button class="btn btn-primary" onclick="generatePDF()">📥 Download PDF Report</button>
-                        <button class="btn btn-secondary" onclick="viewPDF()">👁️ View Report</button>
-                    </div>
-                </div>
-            `;
-            
-            // Email Section
-            html += `
-                <div class="email-section">
-                    <h3>📧 Get Your Report by Email</h3>
-                    <p>We'll send your complete profile with additional insights and updates.</p>
-                    <div class="email-form">
-                        <input type="email" class="email-input" id="email-input" placeholder="Enter your email">
-                        <button class="btn btn-primary" onclick="sendEmail()">Send Report</button>
-                    </div>
-                    <div class="email-success" id="email-success">
-                        ✓ Report sent! Check your inbox.
-                    </div>
-                </div>
-            `;
-            
-            // Share Section
-            html += `
-                <div class="share-buttons">
-                    <button class="share-btn share-copy" onclick="copyShareLink()">🔗 Copy Share Link</button>
-                    <button class="share-btn share-twitter" onclick="shareTwitter()">𝕏 Twitter</button>
-                    <button class="share-btn share-copy" onclick="copyResults()">📋 Copy Text</button>
-                </div>
-                <button class="btn btn-secondary" style="width: 100%; margin-top: 20px;" onclick="restart()">🔄 Take Quiz Again</button>
-            `;
-            
-            document.getElementById('results-container').innerHTML = html;
-            document.getElementById('results-container').style.display = 'block';
-        }
-        
-        function renderScoreBars(elementScores) {
-            const total = Object.values(elementScores).reduce((a, b) => a + b, 0);
-            const maxScore = Math.max(...Object.values(elementScores));
-            let html = '<div class="score-bars">';
-            ['fire', 'water', 'air', 'earth'].forEach(el => {
-                const pct = (elementScores[el] / maxScore * 100).toFixed(0);
-                html += `
-                    <div class="score-bar-item">
-                        <div class="score-bar-label">
-                            <span>${el.charAt(0).toUpperCase() + el.slice(1)}</span>
-                            <span>${elementScores[el]} pts</span>
+                    <div class="layer-section layer-${layer.key}">
+                        <div class="layer-title">
+                            <span class="layer-icon">${layer.icon}</span>
+                            <div>
+                                <strong>${layer.title}</strong>
+                                <div style="font-size: 0.85em; color: #888;">${layer.desc}</div>
+                            </div>
                         </div>
-                        <div class="score-bar-track">
-                            <div class="score-bar-fill ${el}" style="width: ${pct}%"></div>
+                        
+                        <div class="element-bars">
+                            ${['fire', 'water', 'air', 'earth'].map(el => `
+                                <div class="element-bar">
+                                    <span class="element-label">${el.charAt(0).toUpperCase() + el.slice(1)}</span>
+                                    <div class="element-track">
+                                        <div class="element-fill element-${el}" style="width: ${(data.elements[el] / maxElement) * 100}%"></div>
+                                    </div>
+                                    <span class="element-score">${data.elements[el]}</span>
+                                </div>
+                            `).join('')}
                         </div>
+                        
+                        ${data.topArchetypes.map((arch, i) => {
+                            const archData = archetypeData[arch.archetype];
+                            let content = '';
+                            
+                            if (layer.key === 'sun') {
+                                content = `
+                                    <div class="archetype-detail"><strong>Gift:</strong> ${archData.gift}</div>
+                                    <div class="archetype-detail"><strong>Blind Spots:</strong> ${archData.blindSpots.join('; ')}</div>
+                                    <div class="archetype-detail"><strong>Career Fit:</strong> ${archData.career}</div>
+                                `;
+                            } else if (layer.key === 'moon') {
+                                content = `
+                                    <div class="archetype-detail"><strong>Pressure Pattern:</strong> ${archData.shadow}</div>
+                                    <div class="archetype-detail"><strong>Tell:</strong> ${archData.tell}</div>
+                                    <div class="archetype-detail"><strong>Exploit Vulnerability:</strong> ${archData.exploit}</div>
+                                    <div class="archetype-detail"><strong>Poker Application:</strong> ${archData.poker}</div>
+                                `;
+                            } else {
+                                content = `
+                                    <div class="archetype-detail"><strong>Core Wound:</strong> ${archData.wound}</div>
+                                    <div class="archetype-detail"><strong>Shadow Pattern:</strong> ${archData.shadow}</div>
+                                    <div class="archetype-detail"><strong>Growth Edge:</strong> ${archData.growth}</div>
+                                    <div class="archetype-detail"><strong>Relationship Impact:</strong> ${archData.relationships}</div>
+                                    <div class="archetype-detail"><strong>Life Advice:</strong> ${archData.lifeAdvice}</div>
+                                `;
+                            }
+                            
+                            return `
+                                <div class="archetype-result">
+                                    <div class="archetype-name">${i === 0 ? 'Primary' : 'Secondary'}: The ${archData.name}</div>
+                                    ${content}
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 `;
             });
-            return html + '</div>';
+            
+            // Generate PDF immediately
+            generatePDF(results);
+            
+            html += `
+                <div class="pdf-section">
+                    <div class="pdf-ready">✓ Your detailed PDF report is ready</div>
+                    <button class="btn btn-primary" onclick="downloadPDF()">Download PDF Report</button>
+                </div>
+                
+                <div class="share-section">
+                    <h3>Share Your Results</h3>
+                    <div class="share-buttons">
+                        <button class="share-btn share-twitter" onclick="shareTwitter()">Twitter</button>
+                        <button class="share-btn share-facebook" onclick="shareFacebook()">Facebook</button>
+                        <button class="share-btn share-linkedin" onclick="shareLinkedIn()">LinkedIn</button>
+                        <button class="share-btn share-copy" onclick="copyLink()">Copy Link</button>
+                    </div>
+                </div>
+                
+                <div class="email-section">
+                    <h3>Get Your Results by Email</h3>
+                    <input type="email" class="email-input" id="email-input" placeholder="Enter your email address">
+                    <button class="btn btn-primary" onclick="sendEmail()" style="width: 100%;">Send My Results</button>
+                </div>
+            `;
+            
+            container.innerHTML = html;
         }
-        
-        // ==========================================
-        // PDF GENERATION
-        // ==========================================
-        
-        function generatePDF() {
+
+        function generatePDF(results) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            const { scores, archetypeSelections } = calculateScores();
-            const sunDom = getDominantElement(scores.sun);
-            const moonDom = getDominantElement(scores.moon);
-            const shadowDom = getDominantElement(scores.shadow);
-            
-            // Find top archetype
-            const archetypeCount = {};
-            archetypeSelections.forEach(a => {
-                archetypeCount[a] = (archetypeCount[a] || 0) + 1;
-            });
-            const topArchetype = Object.entries(archetypeCount).sort((a, b) => b[1] - a[1])[0];
-            const primaryArch = topArchetype ? topArchetype[0] : 'wizard';
-            
             let y = 20;
+            const pageHeight = 280;
             const margin = 20;
-            const pageWidth = 210;
-            const contentWidth = pageWidth - 2 * margin;
             
-            function addText(text, fontSize = 11, isBold = false) {
-                doc.setFontSize(fontSize);
-                doc.setFont('helvetica', isBold ? 'bold' : 'normal');
-                const lines = doc.splitTextToSize(text, contentWidth);
-                lines.forEach(line => {
-                    if (y > 270) {
-                        doc.addPage();
-                        y = 20;
-                    }
-                    doc.text(line, margin, y);
-                    y += fontSize * 0.4;
-                });
-                y += 3;
-            }
-            
-            function addSection(title) {
-                if (y > 240) {
+            const checkNewPage = (needed) => {
+                if (y + needed > pageHeight) {
                     doc.addPage();
                     y = 20;
                 }
-                y += 5;
-                doc.setFontSize(14);
-                doc.setFont('helvetica', 'bold');
-                doc.text(title, margin, y);
-                y += 10;
-                doc.setFont('helvetica', 'normal');
-            }
+            };
             
-            // COVER PAGE
-            doc.setFontSize(28);
-            doc.setFont('helvetica', 'bold');
-            doc.text('THE ARCHETYPE PROFILE', pageWidth / 2, 60, { align: 'center' });
-            
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Your Complete Psychological Analysis', pageWidth / 2, 75, { align: 'center' });
-            
-            doc.setFontSize(18);
-            y = 100;
-            doc.text(`SUN: ${sunDom.element.toUpperCase()}`, pageWidth / 2, y, { align: 'center' });
-            y += 12;
-            doc.text(`MOON: ${moonDom.element.toUpperCase()}`, pageWidth / 2, y, { align: 'center' });
-            y += 12;
-            doc.text(`SHADOW: ${shadowDom.element.toUpperCase()}`, pageWidth / 2, y, { align: 'center' });
-            
-            if (topArchetype) {
-                y += 20;
-                doc.setFontSize(16);
-                doc.text(`Primary Archetype: ${archetypes[primaryArch].name}`, pageWidth / 2, y, { align: 'center' });
-            }
+            // Title
+            doc.setFontSize(24);
+            doc.setTextColor(79, 172, 254);
+            doc.text('Your Archetype Profile', margin, y);
+            y += 15;
             
             doc.setFontSize(10);
-            doc.text('Generated by The Archetype Quiz', pageWidth / 2, 280, { align: 'center' });
+            doc.setTextColor(100);
+            doc.text('Based on 180 data points across 45 questions', margin, y);
+            y += 20;
             
-            // PAGE 2: OVERVIEW
-            doc.addPage();
-            y = 20;
-            addSection('YOUR PROFILE OVERVIEW');
+            const layers = [
+                { key: 'sun', title: 'THE SUN - Your Mask', desc: 'What you want the world to see' },
+                { key: 'moon', title: 'THE MOON - Under Pressure', desc: 'What emerges when the mask drops' },
+                { key: 'shadow', title: 'THE SHADOW - The Avoided', desc: 'What you hide and avoid' }
+            ];
             
-            addText(`Your Sun is ${sunDom.element.toUpperCase()} - this is your mask, what you project to the world. This is conscious and intentional.`, 11);
-            y += 3;
-            addText(`Your Moon is ${moonDom.element.toUpperCase()} - this is what emerges under pressure when your mask drops. This is reactive, not chosen.`, 11);
-            y += 3;
-            addText(`Your Shadow is ${shadowDom.element.toUpperCase()} - this is what you avoid, judge, or push away. It contains both wounds and hidden gifts.`, 11);
-            
-            // Alignment analysis
-            y += 5;
-            if (sunDom.element === moonDom.element) {
-                addText('KEY INSIGHT: Your Sun and Moon are aligned. What you project is what you actually are under pressure. This is rare and powerful - you are authentic in your presentation.', 11);
-            } else {
-                addText(`KEY INSIGHT: Your Sun (${sunDom.element}) and Moon (${moonDom.element}) differ. This means under pressure, a different energy emerges than what you project. Understanding this gap is where self-awareness lives.`, 11);
-            }
-            
-            if (shadowDom.element === sunDom.element) {
-                y += 3;
-                addText('IMPORTANT: Your Shadow matches your Sun. You might be performing the very thing you are actually avoiding. The wound formed the gift - you ARE your shadow, same energy but at the tender spot.', 11);
-            }
-            
-            // PAGE 3-4: DEEP ANALYSIS - SUN
-            doc.addPage();
-            y = 20;
-            addSection(`☀️ SUN ELEMENT: ${sunDom.element.toUpperCase()}`);
-            addText('This is your conscious presentation - the energy you lead with, the qualities you want the world to see.', 11);
-            
-            const sunAnalysis = deepAnalysis[sunDom.element];
-            y += 5;
-            addText('BLIND SPOTS:', 12, true);
-            sunAnalysis.blindSpots.forEach(point => addText('• ' + point, 11));
-            
-            y += 5;
-            addText('CAREER STRENGTHS:', 12, true);
-            sunAnalysis.careerAdvice.forEach(point => addText('• ' + point, 11));
-            
-            // PAGE 5-6: DEEP ANALYSIS - MOON
-            doc.addPage();
-            y = 20;
-            addSection(`🌙 MOON ELEMENT: ${moonDom.element.toUpperCase()}`);
-            addText('This is your stress response - what emerges when your conscious mask drops. This is not a choice, it is a reaction.', 11);
-            
-            const moonAnalysis = deepAnalysis[moonDom.element];
-            y += 5;
-            addText('EXPLOIT VULNERABILITIES:', 12, true);
-            addText('Others can use these patterns against you:', 11);
-            moonAnalysis.exploitVulnerabilities.forEach(point => addText('• ' + point, 11));
-            
-            y += 5;
-            addText('LIFE ADVICE:', 12, true);
-            moonAnalysis.lifeAdvice.forEach(point => addText('• ' + point, 11));
-            
-            // PAGE 7-8: DEEP ANALYSIS - SHADOW
-            doc.addPage();
-            y = 20;
-            addSection(`🌑 SHADOW ELEMENT: ${shadowDom.element.toUpperCase()}`);
-            addText('This is what you avoid, judge in others, or refuse to acknowledge in yourself. Your shadow contains both wounds and hidden gifts.', 11);
-            
-            const shadowAnalysis = deepAnalysis[shadowDom.element];
-            y += 5;
-            addText('HIDDEN BLIND SPOTS:', 12, true);
-            addText('These are the things you are least likely to see about yourself:', 11);
-            shadowAnalysis.blindSpots.forEach(point => addText('• ' + point, 11));
-            
-            y += 5;
-            addText('SHADOW INTEGRATION:', 12, true);
-            shadowAnalysis.lifeAdvice.forEach(point => addText('• ' + point, 11));
-            
-            // PAGE 9: PRIMARY ARCHETYPE
-            if (topArchetype) {
-                doc.addPage();
-                y = 20;
-                const arch = archetypes[primaryArch];
-                const archInsight = archetypeInsights[primaryArch];
+            layers.forEach(layer => {
+                checkNewPage(80);
                 
-                addSection(`👑 PRIMARY ARCHETYPE: ${arch.name.toUpperCase()}`);
-                addText(`Element: ${arch.element.toUpperCase()}`, 11);
-                addText(`Core Identity: ${arch.desc}`, 11);
-                y += 5;
+                const data = results[layer.key];
                 
-                addText('POKER APPLICATION:', 12, true);
-                addText(archInsight.poker, 11);
+                // Layer header
+                doc.setFontSize(16);
+                doc.setTextColor(79, 172, 254);
+                doc.text(layer.title, margin, y);
+                y += 6;
                 
-                y += 5;
-                addText('ARCHETYPE BLIND SPOT:', 12, true);
-                addText(archInsight.blindSpot, 11);
+                doc.setFontSize(10);
+                doc.setTextColor(100);
+                doc.text(layer.desc, margin, y);
+                y += 12;
                 
-                y += 5;
-                addText('GROWTH EDGE:', 12, true);
-                addText(archInsight.growth, 11);
-            }
-            
-            // PAGE 10: PRACTICAL APPLICATION
-            doc.addPage();
-            y = 20;
-            addSection('PRACTICAL APPLICATION');
-            
-            addText('HOW TO USE THIS PROFILE:', 12, true);
-            y += 3;
-            addText('1. POKER: Your Moon element reveals your tilt pattern. Watch for when your Sun drops and Moon takes over.', 11);
-            y += 3;
-            addText('2. RELATIONSHIPS: Your Shadow shows what you judge in others. That judgment is often projection of disowned parts of yourself.', 11);
-            y += 3;
-            addText('3. CAREER: Lead with your Sun strengths but build systems that account for your Moon under pressure.', 11);
-            y += 3;
-            addText('4. GROWTH: Your Shadow contains your greatest hidden potential. What you avoid is often what you need most.', 11);
-            
-            y += 10;
-            addText('THE FUNDAMENTAL QUESTIONS:', 12, true);
-            y += 3;
-            addText('• Are you aligned? (Sun = Moon = authentic presentation)', 11);
-            addText('• What are you avoiding? (Shadow = unexplored territory)', 11);
-            addText('• Where do you leak under pressure? (Moon = your tells)', 11);
-            addText('• What do you judge in others? (Projection = shadow work)', 11);
-            
-            y += 10;
-            addText('REMEMBER:', 12, true);
-            addText('These are patterns, not prison sentences. Awareness creates choice. The goal is not to eliminate any element but to integrate all of them consciously.', 11);
-            
-            // Save
-            doc.save('Archetype_Profile_Report.pdf');
-        }
-        
-        function viewPDF() {
-            // Generate and open in new tab
-            generatePDF();
-            alert('PDF downloaded! Check your downloads folder.');
-        }
-        
-        // ==========================================
-        // SHARE & EMAIL
-        // ==========================================
-        
-        function generateShareUrl() {
-            const { scores, archetypeSelections } = calculateScores();
-            
-            const sunScores = `${scores.sun.fire},${scores.sun.water},${scores.sun.air},${scores.sun.earth}`;
-            const moonScores = `${scores.moon.fire},${scores.moon.water},${scores.moon.air},${scores.moon.earth}`;
-            const shadowScores = `${scores.shadow.fire},${scores.shadow.water},${scores.shadow.air},${scores.shadow.earth}`;
-            
-            const archCodes = archetypeSelections.map(a => a.substring(0, 2)).join(',');
-            
-            const params = new URLSearchParams();
-            params.set('s', `${sunScores}|${moonScores}|${shadowScores}`);
-            params.set('a', archCodes);
-            params.set('v', '11.6');
-            
-            return window.location.href.split('?')[0] + '?' + params.toString();
-        }
-        
-        function copyShareLink() {
-            const url = generateShareUrl();
-            navigator.clipboard.writeText(url).then(() => {
-                alert('Share link copied! Anyone with this link can see your results.');
+                // Element scores
+                doc.setFontSize(10);
+                doc.setTextColor(60);
+                const elements = ['Fire', 'Water', 'Air', 'Earth'];
+                elements.forEach((el, i) => {
+                    const score = data.elements[el.toLowerCase()];
+                    doc.text(`${el}: ${score}`, margin + (i * 40), y);
+                });
+                y += 12;
+                
+                // Archetypes
+                data.topArchetypes.forEach((arch, i) => {
+                    checkNewPage(60);
+                    
+                    const archData = archetypeData[arch.archetype];
+                    
+                    doc.setFontSize(12);
+                    doc.setTextColor(40);
+                    doc.text(`${i === 0 ? 'Primary' : 'Secondary'}: The ${archData.name}`, margin, y);
+                    y += 8;
+                    
+                    doc.setFontSize(9);
+                    doc.setTextColor(60);
+                    
+                    let details = [];
+                    if (layer.key === 'sun') {
+                        details = [
+                            `Gift: ${archData.gift}`,
+                            `Blind Spots: ${archData.blindSpots.join('; ')}`,
+                            `Career: ${archData.career}`
+                        ];
+                    } else if (layer.key === 'moon') {
+                        details = [
+                            `Pressure Pattern: ${archData.shadow}`,
+                            `Tell: ${archData.tell}`,
+                            `Exploit: ${archData.exploit}`,
+                            `Poker: ${archData.poker}`
+                        ];
+                    } else {
+                        details = [
+                            `Wound: ${archData.wound}`,
+                            `Shadow: ${archData.shadow}`,
+                            `Growth: ${archData.growth}`,
+                            `Relationships: ${archData.relationships}`,
+                            `Life Advice: ${archData.lifeAdvice}`
+                        ];
+                    }
+                    
+                    details.forEach(detail => {
+                        const lines = doc.splitTextToSize(detail, 170);
+                        lines.forEach(line => {
+                            checkNewPage(6);
+                            doc.text(line, margin, y);
+                            y += 5;
+                        });
+                    });
+                    
+                    y += 8;
+                });
+                
+                y += 10;
             });
+            
+            generatedPdfBlob = doc.output('blob');
         }
-        
+
+        function downloadPDF() {
+            if (generatedPdfBlob) {
+                const url = URL.createObjectURL(generatedPdfBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'archetype-profile.pdf';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function getShareUrl() {
+            // Encode results into URL params
+            return window.location.href.split('?')[0];
+        }
+
         function shareTwitter() {
-            const { scores } = calculateScores();
-            const sunDom = getDominantElement(scores.sun);
-            const moonDom = getDominantElement(scores.moon);
-            const text = `My Archetype Profile: Sun ${sunDom.element.toUpperCase()}, Moon ${moonDom.element.toUpperCase()} 🌟 Discover yours!`;
-            const url = generateShareUrl();
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+            const text = "I just discovered my psychological archetypes! Take the quiz:";
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(getShareUrl())}`, '_blank');
         }
-        
-        function copyResults() {
-            const { scores, archetypeSelections } = calculateScores();
-            const sunDom = getDominantElement(scores.sun);
-            const moonDom = getDominantElement(scores.moon);
-            const shadowDom = getDominantElement(scores.shadow);
-            
-            const archetypeCount = {};
-            archetypeSelections.forEach(a => {
-                archetypeCount[a] = (archetypeCount[a] || 0) + 1;
-            });
-            const topArchetype = Object.entries(archetypeCount).sort((a, b) => b[1] - a[1])[0];
-            
-            let text = `THE ARCHETYPE PROFILE\n\n`;
-            text += `☀️ SUN: ${sunDom.element.toUpperCase()} (${sunDom.percentage}%)\n`;
-            text += `🌙 MOON: ${moonDom.element.toUpperCase()} (${moonDom.percentage}%)\n`;
-            text += `🌑 SHADOW: ${shadowDom.element.toUpperCase()} (${shadowDom.percentage}%)\n`;
-            if (topArchetype) {
-                text += `\n👑 Primary Archetype: ${archetypes[topArchetype[0]].name}\n`;
-            }
-            text += `\n🔗 ${generateShareUrl()}`;
-            
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Results copied to clipboard!');
+
+        function shareFacebook() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`, '_blank');
+        }
+
+        function shareLinkedIn() {
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(getShareUrl()).then(() => {
+                alert('Link copied to clipboard!');
             });
         }
-        
+
         function sendEmail() {
             const email = document.getElementById('email-input').value;
             if (!email || !email.includes('@')) {
-                alert('Please enter a valid email address.');
+                alert('Please enter a valid email address');
                 return;
             }
-            
-            // Log to console for now - integrate with actual email service
-            console.log('Email submission:', {
-                email: email,
-                results: calculateScores(),
-                timestamp: new Date().toISOString()
-            });
-            
-            document.getElementById('email-success').style.display = 'block';
-            document.getElementById('email-input').value = '';
-            
-            // Here you would integrate with your email service (e.g., webhook to GHL, ConvertKit, etc.)
-            // Example webhook call:
-            // fetch('YOUR_WEBHOOK_URL', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ email, results: calculateScores() })
-            // });
+            // In production, this would send to your backend
+            alert('Email functionality requires backend integration. PDF is available for download.');
         }
-        
+
         function loadSharedResults(params) {
-            isSharedView = true;
-            
-            // Decode scores
-            const scoreStr = params.get('s');
-            const [sunStr, moonStr, shadowStr] = scoreStr.split('|');
-            const parseScores = (str) => {
-                const [f, w, a, e] = str.split(',').map(Number);
-                return { fire: f, water: w, air: a, earth: e };
-            };
-            
-            // Decode archetypes
-            const archCodes = params.get('a').split(',');
-            const archetypeMap = {
-                'wi': 'wizard', 'ki': 'king', 'tr': 'tracker', 'me': 'mechanic',
-                'mi': 'mirror', 'si': 'siren', 'di': 'diplomat', 'kn': 'knight',
-                'hy': 'hypnotist', 'or': 'oracle', 'tr': 'trickster', 'sh': 'shadow',
-                'ti': 'titan', 'ma': 'maniac', 'pi': 'pirate', 'al': 'alchemist'
-            };
-            
-            // Reconstruct answers for display
-            // (simplified - just show results directly)
-            
-            document.getElementById('quiz-container').style.display = 'none';
-            showSharedResults(parseScores(sunStr), parseScores(moonStr), parseScores(shadowStr), archCodes.map(c => archetypeMap[c] || c));
+            // Parse shared results from URL
+            // Implementation for viewing shared results
         }
-        
-        function showSharedResults(sunScores, moonScores, shadowScores, archetypeList) {
-            // Override calculateScores for shared view
-            const originalCalc = calculateScores;
-            window.calculateScores = () => ({
-                scores: { sun: sunScores, moon: moonScores, shadow: shadowScores },
-                archetypeSelections: archetypeList
-            });
-            
-            showResults();
-        }
-        
-        function restart() {
-            currentQuestion = 0;
-            answers = {};
-            isSharedView = false;
-            window.history.replaceState({}, '', window.location.pathname);
+
+        // Start the quiz
+        function startQuiz() {
+            document.getElementById('intro-screen').style.display = 'none';
             document.getElementById('quiz-container').style.display = 'block';
-            document.getElementById('results-container').style.display = 'none';
-            renderQuestion();
-            window.scrollTo(0, 0);
+            showQuestion(0);
         }
         
-        // Initialize
         init();
     </script>
 </body>
